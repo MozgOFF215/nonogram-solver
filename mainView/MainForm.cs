@@ -34,6 +34,8 @@ namespace mainView
     long maxValY;
     int levelX, levelY;
 
+    Image sourceImage;
+
     class SourceCell
     {
       public int front;
@@ -45,13 +47,19 @@ namespace mainView
 
     void MainForm_Load(object sender, EventArgs e)
     {
-      Image SourceImage = Image.FromFile("images\\Screenshot_20x20.png");
-      SourceBitmap = new Bitmap(SourceImage);
+      sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
 
-      GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(SourceImage));
+      DrawAndAnalyze(sourceImage);
+    }
+
+    void DrawAndAnalyze(Image sourceImage = null)
+    {
+      SourceBitmap = new Bitmap(sourceImage ?? this.sourceImage);
+
+      GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(sourceImage));
 
       pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
-      pictureBoxOriginal.Image = SourceImage;
+      pictureBoxOriginal.Image = sourceImage;
 
       levelX = 60;
       levelY = 160;
@@ -61,12 +69,6 @@ namespace mainView
 
       checkBoxResultZoom.Checked = true;
       pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
-
-      DrawAndAnalyze();
-    }
-
-    void DrawAndAnalyze()
-    {
 
       histX = new Dictionary<int, long>();
       histY = new Dictionary<int, long>();
@@ -432,6 +434,17 @@ namespace mainView
         pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
 
       } while (SolveLog.Instance.Changes > 0);
+    }
+
+    private void button10_Click(object sender, EventArgs e)
+    {
+      var dlg = new OpenFileDialog();
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        var stream = dlg.OpenFile();
+        var image = Image.FromStream(stream);
+        DrawAndAnalyze(image);
+      }
     }
 
     void ShowSolvePlayArea()
