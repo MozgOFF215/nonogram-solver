@@ -16,7 +16,7 @@ namespace mainView
       InitializeComponent();
     }
 
-    Solver _Solve = new Solver();
+    Solver _Solver = new Solver();
 
     Dictionary<int, long> histX;
     Dictionary<int, long> histY;
@@ -142,7 +142,7 @@ namespace mainView
       {
         var res = OCR(validCellsX, validCellsY);
 
-        _Solve.SolvePreparation(res);
+        _Solver.SolvePreparation(res);
 
         ShowSolvePlayArea();
       }
@@ -353,31 +353,31 @@ namespace mainView
 
     private void button2_Click(object sender, EventArgs e)
     {
-      _Solve.SolveHorizStep();
+      _Solver.SolveHorizStep();
       ShowSolvePlayArea();
     }
 
     private void button3_Click(object sender, EventArgs e)
     {
-      _Solve.SolveVertStep();
+      _Solver.SolveVertStep();
       ShowSolvePlayArea();
     }
 
     private void button4_Click(object sender, EventArgs e)
     {
-      _Solve.DescriptorsInit();
+      _Solver.DescriptorsInit();
       ShowSolvePlayArea();
     }
 
     private void button5_Click(object sender, EventArgs e)
     {
-      _Solve.SolveSmallStepH((int)numericUpDownHStep.Value);
+      _Solver.SolveSmallStepH((int)numericUpDownHStep.Value);
       ShowSolvePlayArea();
     }
 
     private void button6_Click(object sender, EventArgs e)
     {
-      _Solve.SolveSmallStepV((int)numericUpDownVStep.Value);
+      _Solver.SolveSmallStepV((int)numericUpDownVStep.Value);
       ShowSolvePlayArea();
     }
 
@@ -401,13 +401,13 @@ namespace mainView
 
     private void button7_Click(object sender, EventArgs e)
     {
-      _Solve.SolveTestInit();
+      _Solver.SolveTestInit();
       ShowSolvePlayArea();
     }
 
     private void button8_Click(object sender, EventArgs e)
     {
-      _Solve.SolveTestGo();
+      _Solver.SolveTestGo();
       ShowSolvePlayArea();
     }
 
@@ -423,11 +423,11 @@ namespace mainView
       {
         SolveLog.Instance.ResetChangesCounter();
 
-        _Solve.SolveVertStep();
+        _Solver.SolveVertStep();
         //System.Threading.Thread.Sleep(100);
         pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
 
-        _Solve.SolveHorizStep();
+        _Solver.SolveHorizStep();
         //System.Threading.Thread.Sleep(100);
         pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
 
@@ -437,9 +437,9 @@ namespace mainView
     void ShowSolvePlayArea()
     {
 
-      List<DescriptorData>[] rowDescrV = _Solve.rowDescrV;
-      List<DescriptorData>[] rowDescrH = _Solve.rowDescrH;
-      var playArea = _Solve.PlayArea;
+      List<DescriptorData>[] rowDescrV = _Solver.rowDescrV;
+      List<DescriptorData>[] rowDescrH = _Solver.rowDescrH;
+      var playArea = _Solver.PlayArea;
 
       var sizePA_X = playArea.SizeX;
       var sizePA_Y = playArea.SizeY;
