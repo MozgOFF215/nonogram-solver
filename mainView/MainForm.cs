@@ -45,18 +45,13 @@ namespace mainView
 
     void MainForm_Load(object sender, EventArgs e)
     {
-      //Image SourceImage = Image.FromFile("..\\..\\..\\..\\Japan_Screenshots\\Screenshot_10x10_2.png");
-      Image SourceImage = Image.FromFile("..\\..\\..\\..\\Japan_Screenshots\\Screenshot_20x20.png");
+      Image SourceImage = Image.FromFile("images\\Screenshot_20x20.png");
       SourceBitmap = new Bitmap(SourceImage);
 
       GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(SourceImage));
 
       pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
       pictureBoxOriginal.Image = SourceImage;
-
-      Image Grayscaled = GrayscaledSourceBitmap;
-      pictureBoxGreyscaled.Image = Grayscaled;
-      pictureBoxGreyscaled.SizeMode = PictureBoxSizeMode.Zoom;
 
       levelX = 60;
       levelY = 160;
