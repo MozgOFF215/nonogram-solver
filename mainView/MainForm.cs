@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace mainView
@@ -369,7 +370,7 @@ namespace mainView
 
     private void button4_Click(object sender, EventArgs e)
     {
-      _Solve.PlayAreaInit();
+      _Solve.DescriptorsInit();
       ShowSolvePlayArea();
     }
 
@@ -413,6 +414,29 @@ namespace mainView
     {
       _Solve.SolveTestGo();
       ShowSolvePlayArea();
+    }
+
+    private void button9_Click(object sender, EventArgs e)
+    {
+      if (!backgroundWorker1.IsBusy)
+        backgroundWorker1.RunWorkerAsync();
+    }
+
+    private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+    {
+      do
+      {
+        SolveLog.Instance.ResetChangesCounter();
+
+        _Solve.SolveVertStep();
+        //System.Threading.Thread.Sleep(100);
+        pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
+
+        _Solve.SolveHorizStep();
+        //System.Threading.Thread.Sleep(100);
+        pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
+
+      } while (SolveLog.Instance.Changes > 0);
     }
 
     void ShowSolvePlayArea()

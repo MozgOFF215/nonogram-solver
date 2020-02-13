@@ -9,43 +9,73 @@ namespace mainView
   public class Cell
   {
     TCell _tCell;
+    int _x;
+    int _y;
+
+    public Cell(int x, int y)
+    {
+      _x = x;
+      _y = y;
+    }
+
     public TCell Value { get { return _tCell; } }
 
-    public void Set(TCell tCell)
+    public void Set(TCell tCell, string key)
     {
+      if (_tCell != tCell)
+      {
+        SolveLog.Instance.LogPA(key, _tCell, tCell, _x, _y);
       _tCell = tCell;
+      }
     }
 
     public override string ToString()
     {
       return _tCell.ToString();
     }
+
+    internal void Clear()
+    {
+      _tCell = TCell.No;
+    }
   }
 
   class SolveArea
   {
     Cell[,] playArea;
-    List<SolveLog> solveLog = new List<SolveLog>();
     int sizeX, sizeY;
-    public SolveArea(Cell[,] playArea, int sizeX, int sizeY)
+
+    public SolveArea(int sizeX, int sizeY)
     {
-      this.playArea = playArea;
+      playArea = new Cell[sizeX, sizeY];
       this.sizeX = sizeX;
       this.sizeY = sizeY;
-      for (int y = 0; y < sizeY; y++) for (int x = 0; x < sizeX; x++) playArea[x, y] = new Cell();
+
+      for (int y = 0; y < sizeY; y++)
+        for (int x = 0; x < sizeX; x++)
+          playArea[x, y] = new Cell(x, y);
     }
+
     public int SizeX { get { return sizeX; } }
+
     public int SizeY { get { return sizeY; } }
+
     public Cell GetCell(int x, int y) => playArea[x, y];
+
     public TCell GetValue(int x, int y) => playArea[x, y].Value;
+
     public void SetCell(int x, int y, TCell type, string key)
     {
       var current = playArea[x, y];
       if (current.Value != type)
       {
-        playArea[x, y].Set(type);
-        solveLog.Add(new SolveLog { key = key, old = current.Value, @new = type, x = x, y = y });
+        playArea[x, y].Set(type, key);
       }
+    }
+
+    internal void Clear()
+    {
+      foreach (var p in playArea) p.Clear();
     }
   }
 }

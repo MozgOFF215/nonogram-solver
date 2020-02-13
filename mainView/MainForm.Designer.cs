@@ -53,6 +53,8 @@
       this.panelSolve = new System.Windows.Forms.Panel();
       this.button7 = new System.Windows.Forms.Button();
       this.button8 = new System.Windows.Forms.Button();
+      this.button9 = new System.Windows.Forms.Button();
+      this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGreyscaled)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).BeginInit();
@@ -281,7 +283,7 @@
       // 
       this.checkBoxResultZoom.AutoSize = true;
       this.checkBoxResultZoom.Location = new System.Drawing.Point(784, 20);
-      this.checkBoxResultZoom.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+      this.checkBoxResultZoom.Margin = new System.Windows.Forms.Padding(2);
       this.checkBoxResultZoom.Name = "checkBoxResultZoom";
       this.checkBoxResultZoom.Size = new System.Drawing.Size(53, 17);
       this.checkBoxResultZoom.TabIndex = 10;
@@ -294,7 +296,7 @@
       this.panelSolve.AutoScroll = true;
       this.panelSolve.Controls.Add(this.pictureBoxSolve);
       this.panelSolve.Location = new System.Drawing.Point(471, 20);
-      this.panelSolve.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+      this.panelSolve.Margin = new System.Windows.Forms.Padding(2);
       this.panelSolve.Name = "panelSolve";
       this.panelSolve.Size = new System.Drawing.Size(302, 340);
       this.panelSolve.TabIndex = 11;
@@ -319,11 +321,26 @@
       this.button8.UseVisualStyleBackColor = true;
       this.button8.Click += new System.EventHandler(this.button8_Click);
       // 
+      // button9
+      // 
+      this.button9.Location = new System.Drawing.Point(888, 397);
+      this.button9.Name = "button9";
+      this.button9.Size = new System.Drawing.Size(75, 23);
+      this.button9.TabIndex = 13;
+      this.button9.Text = "Auto Solve";
+      this.button9.UseVisualStyleBackColor = true;
+      this.button9.Click += new System.EventHandler(this.button9_Click);
+      // 
+      // backgroundWorker1
+      // 
+      this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(993, 615);
+      this.Controls.Add(this.button9);
       this.Controls.Add(this.button8);
       this.Controls.Add(this.button7);
       this.Controls.Add(this.panelSolve);
@@ -393,6 +410,8 @@
     private System.Windows.Forms.Panel panelSolve;
     private System.Windows.Forms.Button button7;
     private System.Windows.Forms.Button button8;
+    private System.Windows.Forms.Button button9;
+    private System.ComponentModel.BackgroundWorker backgroundWorker1;
   }
 }
 

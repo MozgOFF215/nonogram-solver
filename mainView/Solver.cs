@@ -15,7 +15,7 @@ namespace mainView
 
     void ClearPlayArea()
     {
-      PlayArea = new SolveArea(new Cell[SizeX, SizeY], SizeX, SizeY);
+      PlayArea.Clear();
     }
 
     public void SolvePreparation(List<List<int>> sourceData)
@@ -41,13 +41,14 @@ namespace mainView
 
       SizeY = sourceData.Count - pos;
 
-      PlayAreaInit();
+      PlayArea = new SolveArea(SizeX, SizeY);
+
+      DescriptorsInit();
     }
 
-    public void PlayAreaInit()
+    public void DescriptorsInit()
     {
       ClearPlayArea();
-
       rowDescrV = new List<DescriptorData>[SizeX];
       rowDescrH = new List<DescriptorData>[SizeY];
 
@@ -56,10 +57,7 @@ namespace mainView
         {
           if (rowDescrV[x] == null) rowDescrV[x] = new List<DescriptorData>();
           var xx = x + sourceData[0].Count - SizeX;
-          if (sourceData[y][xx] > 0) rowDescrV[x].Add(new DescriptorData
-          {
-            Value = sourceData[y][xx]
-          });
+          if (sourceData[y][xx] > 0) rowDescrV[x].Add(new DescriptorData(true, x, rowDescrV[x].Count, SizeY, sourceData[y][xx]));
         }
 
       for (int x = 0; x < sourceData[0].Count - SizeX; x++)
@@ -67,9 +65,8 @@ namespace mainView
         {
           if (rowDescrH[y] == null) rowDescrH[y] = new List<DescriptorData>();
           var yy = y + sourceData.Count - SizeY;
-          if (sourceData[yy][x] > 0) rowDescrH[y].Add(new DescriptorData { Value = sourceData[yy][x] });
+          if (sourceData[yy][x] > 0) rowDescrH[y].Add(new DescriptorData(false, y, rowDescrH[y].Count, SizeX, sourceData[yy][x]));
         }
-
     }
 
     public void SolveHorizStep()
@@ -207,41 +204,33 @@ namespace mainView
       {
         switch (c)
         {
-          case ' ': vectorPA[indx].Set(TCell.No); break;
+          case ' ': vectorPA[indx].Set(TCell.No, "fill test"); break;
           case 'x':
-          case 'X': vectorPA[indx].Set(TCell.X); break;
-          default: vectorPA[indx].Set(TCell.F); break;
+          case 'X': vectorPA[indx].Set(TCell.X, "fill test"); break;
+          default: vectorPA[indx].Set(TCell.F, "fill test"); break;
         }
         indx++;
       }
 
       rowDescrH[countTestRows] = new List<DescriptorData>();
-      foreach (var d in initDescr) rowDescrH[countTestRows].Add(new DescriptorData { Value = d });
+      foreach (var d in initDescr) rowDescrH[countTestRows].Add(new DescriptorData(false, countTestRows, rowDescrH[countTestRows].Count, SizeX, d));
       countTestRows++;
     }
 
 
-    void initSizeDescriptors()
-    {
-      foreach (var r in rowDescrH) foreach (var d in r) d.rowSize = SizeX;
-      foreach (var r in rowDescrV) foreach (var d in r) d.rowSize = SizeY;
-    }
-
     void SolveLogic(int rowSize, Cell[] vectorPA, List<DescriptorData> rowDescriptors)
     {
-      initSizeDescriptors();
-
       {
         // left to right: found limits
         var nextStart = 0;
         foreach (var d in rowDescriptors)
         {
-          if (nextStart > d.padStart) d.padStart = nextStart;
-          while (!hasPlaceAtStart(d.padStart, vectorPA, d))
+          if (nextStart > d.PadStart) d.SetPadStart(nextStart, "left to right: found limits");
+          while (!hasPlaceAtStart(d.PadStart, vectorPA, d))
           {
-            d.padStart++;
+            d.SetPadStart(d.PadStart + 1, "left to right: found limits");
           }
-          nextStart = d.padStart + d.Value + 1;
+          nextStart = d.PadStart + d.Value + 1;
         }
       }
 
@@ -251,12 +240,12 @@ namespace mainView
         var nextEnd = 0;
         foreach (var d in rowDescriptors)
         {
-          if (nextEnd > d.padEnd) d.padEnd = nextEnd;
-          while (!hasPlaceAtEnd(rowSize - d.padEnd - 1, vectorPA, d))
+          if (nextEnd > d.PadEnd) d.SetPadEnd(nextEnd, "right to left: found limits");
+          while (!hasPlaceAtEnd(rowSize - d.PadEnd - 1, vectorPA, d))
           {
-            d.padEnd++;
+            d.SetPadEnd(d.PadEnd + 1, "right to left: found limits");
           }
-          nextEnd = d.padEnd + d.Value + 1;
+          nextEnd = d.PadEnd + d.Value + 1;
         }
         rowDescriptors.Reverse();
       }
@@ -264,9 +253,9 @@ namespace mainView
       // fill intersections
       foreach (var d in rowDescriptors)
       {
-        var endMin = d.padStart + d.Value - 1;
-        var startMax = rowSize - d.padEnd - d.Value;
-        for (int i = startMax; i <= endMin; i++) vectorPA[i].Set(TCell.F);
+        var endMin = d.PadStart + d.Value - 1;
+        var startMax = rowSize - d.PadEnd - d.Value;
+        for (int i = startMax; i <= endMin; i++) vectorPA[i].Set(TCell.F, "fill intersections");
       }
 
       // left to right: fill fixed tails
@@ -275,12 +264,12 @@ namespace mainView
         if (d.isSolved()) continue;
         var fill = false;
         var cnt = 0;
-        for (int i = d.padStart; i < d.padStart + d.Value; i++)
+        for (int i = d.PadStart; i < d.PadStart + d.Value; i++)
         {
-          if (fill) { vectorPA[i].Set(TCell.F); cnt++; }
+          if (fill) { vectorPA[i].Set(TCell.F, "left to right: fill fixed tails"); cnt++; }
           else if (vectorPA[i].Value == TCell.F) { cnt++; fill = true; }
         }
-        if (cnt == d.Value) d.padEnd = rowSize - (d.padStart + d.Value);
+        if (cnt == d.Value) d.SetPadEnd(rowSize - (d.PadStart + d.Value), "left to right: fill fixed tails");
         break;
       }
 
@@ -291,12 +280,12 @@ namespace mainView
         if (d.isSolved()) continue;
         var fill = false;
         var cnt = 0;
-        for (int i = d.padEnd; i < d.padEnd + d.Value; i++)
+        for (int i = d.PadEnd; i < d.PadEnd + d.Value; i++)
         {
-          if (fill) { vectorPA[rowSize - i - 1].Set(TCell.F); cnt++; }
+          if (fill) { vectorPA[rowSize - i - 1].Set(TCell.F, "right to left: fill fixed tails"); cnt++; }
           else if (vectorPA[rowSize - i - 1].Value == TCell.F) { cnt++; fill = true; }
         }
-        if (cnt == d.Value) d.padStart = rowSize - (d.padEnd + d.Value);
+        if (cnt == d.Value) d.SetPadStart(rowSize - (d.PadEnd + d.Value), "right to left: fill fixed tails");
         break;
       }
       rowDescriptors.Reverse();
@@ -306,8 +295,8 @@ namespace mainView
         var current = 0;
         foreach (var d in rowDescriptors)
         {
-          for (int i = current; i < d.padStart; i++) vectorPA[i].Set(TCell.X);
-          current = rowSize - d.padEnd;
+          for (int i = current; i < d.PadStart; i++) vectorPA[i].Set(TCell.X, "left to right: mark imposible cells as X");
+          current = rowSize - d.PadEnd;
         }
       }
 
@@ -317,8 +306,8 @@ namespace mainView
         var current = 0;
         foreach (var d in rowDescriptors)
         {
-          for (int i = current; i < d.padEnd; i++) vectorPA[rowSize - i - 1].Set(TCell.X);
-          current = rowSize - d.padStart;
+          for (int i = current; i < d.PadEnd; i++) vectorPA[rowSize - i - 1].Set(TCell.X, "right to left: mark imposible cells as X");
+          current = rowSize - d.PadStart;
         }
         rowDescriptors.Reverse();
       }
