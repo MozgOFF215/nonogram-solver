@@ -49,23 +49,26 @@ namespace mainView
     {
       sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
 
-      DrawAndAnalyze(sourceImage);
-    }
-
-    void DrawAndAnalyze(Image sourceImage = null)
-    {
-      SourceBitmap = new Bitmap(sourceImage ?? this.sourceImage);
-
-      GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(sourceImage));
-
-      pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
-      pictureBoxOriginal.Image = sourceImage;
-
       levelX = 60;
       levelY = 160;
 
       numericUpDownLevelX.Value = levelX;
       numericUpDownLevelY.Value = levelY;
+      
+      DrawAndAnalyze(sourceImage);
+    }
+
+    void DrawAndAnalyze(Image sourceImage = null)
+    {
+      sourceImage = sourceImage == null ? this.sourceImage : sourceImage;
+      this.sourceImage = sourceImage;
+
+      SourceBitmap = new Bitmap(sourceImage);
+
+      GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(sourceImage));
+
+      pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
+      pictureBoxOriginal.Image = sourceImage;
 
       checkBoxResultZoom.Checked = true;
       pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
