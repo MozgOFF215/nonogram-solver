@@ -18,8 +18,10 @@ namespace mainView
 
     Solver _Solver = new Solver();
 
-    Dictionary<int, long> histX;
-    Dictionary<int, long> histY;
+    Dictionary<int, int> histX;
+    Dictionary<int, int> dhistX;
+    Dictionary<int, int> histY;
+    Dictionary<int, int> dhistY;
     Dictionary<int, bool> histXboolean;
     Dictionary<int, bool> histYboolean;
 
@@ -47,14 +49,14 @@ namespace mainView
 
     void MainForm_Load(object sender, EventArgs e)
     {
-      sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
+      sourceImage = Image.FromFile("images\\Screenshot_25x25_3.png");
 
       levelX = 60;
       levelY = 160;
 
       numericUpDownLevelX.Value = levelX;
       numericUpDownLevelY.Value = levelY;
-      
+
       DrawAndAnalyze(sourceImage);
     }
 
@@ -73,24 +75,31 @@ namespace mainView
       checkBoxResultZoom.Checked = true;
       pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
 
-      histX = new Dictionary<int, long>();
-      histY = new Dictionary<int, long>();
+      histX = new Dictionary<int, int>();
+      histY = new Dictionary<int, int>();
+      dhistX = new Dictionary<int, int>();
+      dhistY = new Dictionary<int, int>();
       histXboolean = new Dictionary<int, bool>();
       histYboolean = new Dictionary<int, bool>();
       cellsX = new List<SourceCell>();
       cellsY = new List<SourceCell>();
 
       // gen histograms for Y
-      for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
       {
-        long hist = 0;
-        for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
+        double prev = 0;
+        for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
         {
-          Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
-          hist += pixelColor.R;
+          long hist = 0;
+          for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
+          {
+            Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
+            hist += pixelColor.R;
+          }
+          var res = hist / (double)GrayscaledSourceBitmap.Width;
+          histY[y] = (int)res;
+          dhistY[y] = (int)(res - prev);
+          prev = res;
         }
-        hist = hist / GrayscaledSourceBitmap.Width;
-        histY[y] = hist;
       }
 
       // histogram Y analyze
@@ -112,17 +121,52 @@ namespace mainView
       var errorY = checkCells(validCellsY, "Y", labelErrorsY);
 
       // gen histograms for X
-      for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
       {
-        long hist = 0;
-        //for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
-        for (int y = validCellsY.First().posAfterFront - validCellsY.First().front; y < validCellsY.Last().posAfterFront + validCellsY.Last().width + validCellsY.Last().back; y++)
+        double prev = 0;
+        for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
         {
-          Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
-          hist += pixelColor.R;
+          long hist = 0;
+          //for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
+          for (int y = validCellsY.First().posAfterFront - validCellsY.First().front; y < validCellsY.Last().posAfterFront + validCellsY.Last().width + validCellsY.Last().back; y++)
+          {
+            Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
+            hist += pixelColor.R;
+          }
+          var res = hist / (double)GrayscaledSourceBitmap.Height;
+          histX[x] = (int)res;
+          dhistX[x] = (int)(res - prev);
+          prev = res;
         }
-        hist = hist / GrayscaledSourceBitmap.Height;
-        histX[x] = hist;
+      }
+      // diff hist X analyze
+      var dMaxValX = dhistX.Select(i => i.Value).Max();
+      var dMinValX = dhistX.Select(i => i.Value).Min();
+
+      pictureBoxAccelerate.Height = panelAccelerate.Height - 40;
+      pictureBoxAccelerate.Width = GrayscaledSourceBitmap.Width;
+
+      var DHistBitmapX = new Bitmap(GrayscaledSourceBitmap.Width, pictureBoxAccelerate.Height);
+
+      pictureBoxAccelerate.Image = DHistBitmapX;
+      pictureBoxAccelerate.SizeMode = PictureBoxSizeMode.Zoom;
+
+
+      bool toDown = false;
+      int xToDown = 0;
+      bool toUp = false;
+      int xToUp = 0;
+      for (int x = 0; x < dhistX.Count; x++)
+      {
+        if (dhistX[x] < 30 && !toDown) { toDown = true; xToDown = x; }
+        if (dhistX[x] > 10 && toDown)
+        {
+          toDown = false;
+          DHistBitmapX.SetPixel(x, 5, Color.Red);
+          toUp = true; xToUp = x;
+        }
+        var y = (dhistX[x] - dMinValX) * (DHistBitmapX.Height - 1) / (double)(dMaxValX - dMinValX);
+        for (int i = 10; i < y; i++)
+          DHistBitmapX.SetPixel(x, i, Color.Black);
       }
 
       // histogram X analyze
@@ -193,9 +237,10 @@ namespace mainView
               ocr.Init(@"", "eng", false);
               List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
               value = Convert.ToInt32(string.Join("", result.Select(i => i.Text)));
-              //bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
-            }catch { }
+              bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
             }
+            catch { }
+          }
           resX.Add(value);
         }
         res.Add(resX);
@@ -204,7 +249,7 @@ namespace mainView
       return res;
     }
 
-    void refreshHistX(long level, Dictionary<int, long> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
+    void refreshHistX(long level, Dictionary<int, int> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
     {
       foreach (var hist in histDictionary)
       {
@@ -242,7 +287,7 @@ namespace mainView
       }
     }
 
-    void refreshHistY(long level, Dictionary<int, long> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
+    void refreshHistY(long level, Dictionary<int, int> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
     {
       foreach (var hist in histDictionary)
       {

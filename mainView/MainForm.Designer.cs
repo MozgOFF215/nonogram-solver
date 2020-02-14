@@ -57,8 +57,8 @@
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.button10 = new System.Windows.Forms.Button();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.panelAccelerate = new System.Windows.Forms.Panel();
+      this.pictureBoxAccelerate = new System.Windows.Forms.PictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).BeginInit();
       this.panelHistY.SuspendLayout();
@@ -72,26 +72,24 @@
       this.panelSolve.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
-      this.panel1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.panelAccelerate.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAccelerate)).BeginInit();
       this.SuspendLayout();
       // 
       // pictureBoxOriginal
       // 
-      this.pictureBoxOriginal.Location = new System.Drawing.Point(16, 15);
-      this.pictureBoxOriginal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxOriginal.Location = new System.Drawing.Point(12, 12);
       this.pictureBoxOriginal.Name = "pictureBoxOriginal";
-      this.pictureBoxOriginal.Size = new System.Drawing.Size(308, 559);
+      this.pictureBoxOriginal.Size = new System.Drawing.Size(231, 454);
       this.pictureBoxOriginal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxOriginal.TabIndex = 0;
       this.pictureBoxOriginal.TabStop = false;
       // 
       // pictureBoxHistY
       // 
-      this.pictureBoxHistY.Location = new System.Drawing.Point(4, 4);
-      this.pictureBoxHistY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxHistY.Location = new System.Drawing.Point(3, 3);
       this.pictureBoxHistY.Name = "pictureBoxHistY";
-      this.pictureBoxHistY.Size = new System.Drawing.Size(323, 415);
+      this.pictureBoxHistY.Size = new System.Drawing.Size(242, 337);
       this.pictureBoxHistY.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxHistY.TabIndex = 0;
       this.pictureBoxHistY.TabStop = false;
@@ -100,76 +98,69 @@
       // 
       this.panelHistY.AutoScroll = true;
       this.panelHistY.Controls.Add(this.pictureBoxHistY);
-      this.panelHistY.Location = new System.Drawing.Point(332, 15);
-      this.panelHistY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.panelHistY.Location = new System.Drawing.Point(249, 12);
       this.panelHistY.Name = "panelHistY";
-      this.panelHistY.Size = new System.Drawing.Size(181, 559);
+      this.panelHistY.Size = new System.Drawing.Size(136, 454);
       this.panelHistY.TabIndex = 1;
       // 
       // labelErrorsX
       // 
       this.labelErrorsX.AutoSize = true;
-      this.labelErrorsX.Location = new System.Drawing.Point(1044, 619);
-      this.labelErrorsX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      this.labelErrorsX.Location = new System.Drawing.Point(783, 503);
       this.labelErrorsX.Name = "labelErrorsX";
-      this.labelErrorsX.Size = new System.Drawing.Size(83, 17);
+      this.labelErrorsX.Size = new System.Drawing.Size(52, 13);
       this.labelErrorsX.TabIndex = 4;
       this.labelErrorsX.Text = "---------------";
       // 
       // numericUpDownLevelX
       // 
-      this.numericUpDownLevelX.Location = new System.Drawing.Point(1184, 18);
-      this.numericUpDownLevelX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownLevelX.Location = new System.Drawing.Point(888, 15);
       this.numericUpDownLevelX.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
       this.numericUpDownLevelX.Name = "numericUpDownLevelX";
-      this.numericUpDownLevelX.Size = new System.Drawing.Size(91, 22);
+      this.numericUpDownLevelX.Size = new System.Drawing.Size(68, 20);
       this.numericUpDownLevelX.TabIndex = 5;
       this.numericUpDownLevelX.ValueChanged += new System.EventHandler(this.numericUpDownLevelX_ValueChanged);
       // 
       // numericUpDownLevelY
       // 
-      this.numericUpDownLevelY.Location = new System.Drawing.Point(1184, 50);
-      this.numericUpDownLevelY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownLevelY.Location = new System.Drawing.Point(888, 41);
       this.numericUpDownLevelY.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
       this.numericUpDownLevelY.Name = "numericUpDownLevelY";
-      this.numericUpDownLevelY.Size = new System.Drawing.Size(91, 22);
+      this.numericUpDownLevelY.Size = new System.Drawing.Size(68, 20);
       this.numericUpDownLevelY.TabIndex = 6;
       this.numericUpDownLevelY.ValueChanged += new System.EventHandler(this.numericUpDownLevelY_ValueChanged);
       // 
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(1119, 18);
-      this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      this.label1.Location = new System.Drawing.Point(839, 15);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(55, 17);
+      this.label1.Size = new System.Drawing.Size(43, 13);
       this.label1.TabIndex = 7;
       this.label1.Text = "Level X";
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(1119, 53);
-      this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      this.label2.Location = new System.Drawing.Point(839, 43);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(55, 17);
+      this.label2.Size = new System.Drawing.Size(43, 13);
       this.label2.TabIndex = 7;
       this.label2.Text = "Level Y";
       // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(1032, 165);
-      this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button1.Location = new System.Drawing.Point(774, 134);
       this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(119, 36);
+      this.button1.Size = new System.Drawing.Size(89, 29);
       this.button1.TabIndex = 8;
       this.button1.Text = "Rescan";
       this.button1.UseVisualStyleBackColor = true;
@@ -178,10 +169,9 @@
       // labelErrorsY
       // 
       this.labelErrorsY.AutoSize = true;
-      this.labelErrorsY.Location = new System.Drawing.Point(1044, 635);
-      this.labelErrorsY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+      this.labelErrorsY.Location = new System.Drawing.Point(783, 516);
       this.labelErrorsY.Name = "labelErrorsY";
-      this.labelErrorsY.Size = new System.Drawing.Size(83, 17);
+      this.labelErrorsY.Size = new System.Drawing.Size(52, 13);
       this.labelErrorsY.TabIndex = 4;
       this.labelErrorsY.Text = "---------------";
       // 
@@ -189,18 +179,16 @@
       // 
       this.panelHistX.AutoScroll = true;
       this.panelHistX.Controls.Add(this.pictureBoxHistX);
-      this.panelHistX.Location = new System.Drawing.Point(16, 581);
-      this.panelHistX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.panelHistX.Location = new System.Drawing.Point(12, 472);
       this.panelHistX.Name = "panelHistX";
-      this.panelHistX.Size = new System.Drawing.Size(943, 161);
+      this.panelHistX.Size = new System.Drawing.Size(707, 131);
       this.panelHistX.TabIndex = 2;
       // 
       // pictureBoxHistX
       // 
-      this.pictureBoxHistX.Location = new System.Drawing.Point(4, 0);
-      this.pictureBoxHistX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxHistX.Location = new System.Drawing.Point(3, 0);
       this.pictureBoxHistX.Name = "pictureBoxHistX";
-      this.pictureBoxHistX.Size = new System.Drawing.Size(323, 319);
+      this.pictureBoxHistX.Size = new System.Drawing.Size(242, 259);
       this.pictureBoxHistX.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxHistX.TabIndex = 0;
       this.pictureBoxHistX.TabStop = false;
@@ -209,19 +197,17 @@
       // 
       this.pictureBoxSolve.Dock = System.Windows.Forms.DockStyle.Fill;
       this.pictureBoxSolve.Location = new System.Drawing.Point(0, 0);
-      this.pictureBoxSolve.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
       this.pictureBoxSolve.Name = "pictureBoxSolve";
-      this.pictureBoxSolve.Size = new System.Drawing.Size(439, 560);
+      this.pictureBoxSolve.Size = new System.Drawing.Size(329, 455);
       this.pictureBoxSolve.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxSolve.TabIndex = 0;
       this.pictureBoxSolve.TabStop = false;
       // 
       // button2
       // 
-      this.button2.Location = new System.Drawing.Point(19, 23);
-      this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button2.Location = new System.Drawing.Point(14, 19);
       this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(240, 38);
+      this.button2.Size = new System.Drawing.Size(180, 31);
       this.button2.TabIndex = 8;
       this.button2.Text = "Horizontal step";
       this.button2.UseVisualStyleBackColor = true;
@@ -229,10 +215,9 @@
       // 
       // button3
       // 
-      this.button3.Location = new System.Drawing.Point(19, 69);
-      this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button3.Location = new System.Drawing.Point(14, 56);
       this.button3.Name = "button3";
-      this.button3.Size = new System.Drawing.Size(240, 38);
+      this.button3.Size = new System.Drawing.Size(180, 31);
       this.button3.TabIndex = 8;
       this.button3.Text = "Vertical step";
       this.button3.UseVisualStyleBackColor = true;
@@ -240,10 +225,9 @@
       // 
       // button4
       // 
-      this.button4.Location = new System.Drawing.Point(1173, 165);
-      this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button4.Location = new System.Drawing.Point(880, 134);
       this.button4.Name = "button4";
-      this.button4.Size = new System.Drawing.Size(119, 36);
+      this.button4.Size = new System.Drawing.Size(89, 29);
       this.button4.TabIndex = 8;
       this.button4.Text = "Clear";
       this.button4.UseVisualStyleBackColor = true;
@@ -251,36 +235,33 @@
       // 
       // numericUpDownHStep
       // 
-      this.numericUpDownHStep.Location = new System.Drawing.Point(184, 118);
-      this.numericUpDownHStep.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownHStep.Location = new System.Drawing.Point(138, 96);
       this.numericUpDownHStep.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
       this.numericUpDownHStep.Name = "numericUpDownHStep";
-      this.numericUpDownHStep.Size = new System.Drawing.Size(75, 22);
+      this.numericUpDownHStep.Size = new System.Drawing.Size(56, 20);
       this.numericUpDownHStep.TabIndex = 5;
       // 
       // numericUpDownVStep
       // 
-      this.numericUpDownVStep.Location = new System.Drawing.Point(184, 153);
-      this.numericUpDownVStep.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownVStep.Location = new System.Drawing.Point(138, 124);
       this.numericUpDownVStep.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
       this.numericUpDownVStep.Name = "numericUpDownVStep";
-      this.numericUpDownVStep.Size = new System.Drawing.Size(75, 22);
+      this.numericUpDownVStep.Size = new System.Drawing.Size(56, 20);
       this.numericUpDownVStep.TabIndex = 5;
       // 
       // button5
       // 
-      this.button5.Location = new System.Drawing.Point(19, 114);
-      this.button5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button5.Location = new System.Drawing.Point(14, 93);
       this.button5.Name = "button5";
-      this.button5.Size = new System.Drawing.Size(157, 28);
+      this.button5.Size = new System.Drawing.Size(118, 23);
       this.button5.TabIndex = 9;
       this.button5.Text = "Solve Line №";
       this.button5.UseVisualStyleBackColor = true;
@@ -288,10 +269,9 @@
       // 
       // button6
       // 
-      this.button6.Location = new System.Drawing.Point(19, 150);
-      this.button6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button6.Location = new System.Drawing.Point(14, 122);
       this.button6.Name = "button6";
-      this.button6.Size = new System.Drawing.Size(157, 28);
+      this.button6.Size = new System.Drawing.Size(118, 23);
       this.button6.TabIndex = 9;
       this.button6.Text = "Solve Column №";
       this.button6.UseVisualStyleBackColor = true;
@@ -300,10 +280,10 @@
       // checkBoxResultZoom
       // 
       this.checkBoxResultZoom.AutoSize = true;
-      this.checkBoxResultZoom.Location = new System.Drawing.Point(1007, 14);
-      this.checkBoxResultZoom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this.checkBoxResultZoom.Location = new System.Drawing.Point(755, 11);
+      this.checkBoxResultZoom.Margin = new System.Windows.Forms.Padding(2);
       this.checkBoxResultZoom.Name = "checkBoxResultZoom";
-      this.checkBoxResultZoom.Size = new System.Drawing.Size(66, 21);
+      this.checkBoxResultZoom.Size = new System.Drawing.Size(53, 17);
       this.checkBoxResultZoom.TabIndex = 10;
       this.checkBoxResultZoom.Text = "Zoom";
       this.checkBoxResultZoom.UseVisualStyleBackColor = true;
@@ -313,18 +293,17 @@
       // 
       this.panelSolve.AutoScroll = true;
       this.panelSolve.Controls.Add(this.pictureBoxSolve);
-      this.panelSolve.Location = new System.Drawing.Point(520, 14);
-      this.panelSolve.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this.panelSolve.Location = new System.Drawing.Point(390, 11);
+      this.panelSolve.Margin = new System.Windows.Forms.Padding(2);
       this.panelSolve.Name = "panelSolve";
-      this.panelSolve.Size = new System.Drawing.Size(439, 560);
+      this.panelSolve.Size = new System.Drawing.Size(329, 455);
       this.panelSolve.TabIndex = 11;
       // 
       // button7
       // 
-      this.button7.Location = new System.Drawing.Point(16, 23);
-      this.button7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button7.Location = new System.Drawing.Point(12, 19);
       this.button7.Name = "button7";
-      this.button7.Size = new System.Drawing.Size(100, 28);
+      this.button7.Size = new System.Drawing.Size(75, 23);
       this.button7.TabIndex = 12;
       this.button7.Text = "Init Test";
       this.button7.UseVisualStyleBackColor = true;
@@ -332,10 +311,9 @@
       // 
       // button8
       // 
-      this.button8.Location = new System.Drawing.Point(156, 23);
-      this.button8.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button8.Location = new System.Drawing.Point(117, 19);
       this.button8.Name = "button8";
-      this.button8.Size = new System.Drawing.Size(100, 28);
+      this.button8.Size = new System.Drawing.Size(75, 23);
       this.button8.TabIndex = 12;
       this.button8.Text = "Start Test";
       this.button8.UseVisualStyleBackColor = true;
@@ -344,10 +322,9 @@
       // button9
       // 
       this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.button9.Location = new System.Drawing.Point(1032, 222);
-      this.button9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button9.Location = new System.Drawing.Point(774, 180);
       this.button9.Name = "button9";
-      this.button9.Size = new System.Drawing.Size(260, 59);
+      this.button9.Size = new System.Drawing.Size(195, 48);
       this.button9.TabIndex = 13;
       this.button9.Text = "Full Solve";
       this.button9.UseVisualStyleBackColor = true;
@@ -365,11 +342,9 @@
       this.groupBox1.Controls.Add(this.numericUpDownHStep);
       this.groupBox1.Controls.Add(this.numericUpDownVStep);
       this.groupBox1.Controls.Add(this.button6);
-      this.groupBox1.Location = new System.Drawing.Point(1029, 314);
-      this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox1.Location = new System.Drawing.Point(772, 255);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-      this.groupBox1.Size = new System.Drawing.Size(267, 196);
+      this.groupBox1.Size = new System.Drawing.Size(200, 159);
       this.groupBox1.TabIndex = 15;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Solve by step";
@@ -378,52 +353,47 @@
       // 
       this.groupBox2.Controls.Add(this.button7);
       this.groupBox2.Controls.Add(this.button8);
-      this.groupBox2.Location = new System.Drawing.Point(1032, 532);
-      this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox2.Location = new System.Drawing.Point(774, 432);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-      this.groupBox2.Size = new System.Drawing.Size(264, 71);
+      this.groupBox2.Size = new System.Drawing.Size(198, 58);
       this.groupBox2.TabIndex = 16;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Test";
       // 
       // button10
       // 
-      this.button10.Location = new System.Drawing.Point(1032, 114);
-      this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button10.Location = new System.Drawing.Point(774, 93);
       this.button10.Name = "button10";
-      this.button10.Size = new System.Drawing.Size(119, 36);
+      this.button10.Size = new System.Drawing.Size(89, 29);
       this.button10.TabIndex = 17;
       this.button10.Text = "Load image";
       this.button10.UseVisualStyleBackColor = true;
       this.button10.Click += new System.EventHandler(this.button10_Click);
       // 
-      // panel1
+      // panelAccelerate
       // 
-      this.panel1.AutoScroll = true;
-      this.panel1.Controls.Add(this.pictureBox1);
-      this.panel1.Location = new System.Drawing.Point(16, 750);
-      this.panel1.Margin = new System.Windows.Forms.Padding(4);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(943, 161);
-      this.panel1.TabIndex = 3;
+      this.panelAccelerate.AutoScroll = true;
+      this.panelAccelerate.Controls.Add(this.pictureBoxAccelerate);
+      this.panelAccelerate.Location = new System.Drawing.Point(12, 609);
+      this.panelAccelerate.Name = "panelAccelerate";
+      this.panelAccelerate.Size = new System.Drawing.Size(707, 131);
+      this.panelAccelerate.TabIndex = 3;
       // 
-      // pictureBox1
+      // pictureBoxAccelerate
       // 
-      this.pictureBox1.Location = new System.Drawing.Point(4, 0);
-      this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(323, 319);
-      this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pictureBox1.TabIndex = 0;
-      this.pictureBox1.TabStop = false;
+      this.pictureBoxAccelerate.Location = new System.Drawing.Point(3, 0);
+      this.pictureBoxAccelerate.Name = "pictureBoxAccelerate";
+      this.pictureBoxAccelerate.Size = new System.Drawing.Size(242, 259);
+      this.pictureBoxAccelerate.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pictureBoxAccelerate.TabIndex = 0;
+      this.pictureBoxAccelerate.TabStop = false;
       // 
       // MainForm
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1324, 959);
-      this.Controls.Add(this.panel1);
+      this.ClientSize = new System.Drawing.Size(993, 779);
+      this.Controls.Add(this.panelAccelerate);
       this.Controls.Add(this.button10);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
@@ -441,9 +411,8 @@
       this.Controls.Add(this.panelHistY);
       this.Controls.Add(this.pictureBoxOriginal);
       this.Controls.Add(this.button4);
-      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
       this.Name = "MainForm";
-      this.Text = "MainForm";
+      this.Text = "Nonogram Solver. Copyright © MozgOFF, 2020";
       this.Load += new System.EventHandler(this.MainForm_Load);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).EndInit();
@@ -458,8 +427,8 @@
       this.panelSolve.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
-      this.panel1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      this.panelAccelerate.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxAccelerate)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -496,8 +465,8 @@
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.Button button10;
-    private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.Panel panelAccelerate;
+    private System.Windows.Forms.PictureBox pictureBoxAccelerate;
   }
 }
 
