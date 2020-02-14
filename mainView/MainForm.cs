@@ -186,13 +186,16 @@ namespace mainView
           var value = 0;
           if (fullness > 10)
           {
-            tessnet2.Tesseract ocr = new tessnet2.Tesseract();
-            ocr.SetVariable("tessedit_char_whitelist", "0123456789");
-            ocr.Init(@"", "eng", false);
-            List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
-            value = Convert.ToInt32(string.Join("", result.Select(i => i.Text)));
-            //bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
-          }
+            try
+            {
+              tessnet2.Tesseract ocr = new tessnet2.Tesseract();
+              ocr.SetVariable("tessedit_char_whitelist", "0123456789");
+              ocr.Init(@"", "eng", false);
+              List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
+              value = Convert.ToInt32(string.Join("", result.Select(i => i.Text)));
+              //bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
+            }catch { }
+            }
           resX.Add(value);
         }
         res.Add(resX);
