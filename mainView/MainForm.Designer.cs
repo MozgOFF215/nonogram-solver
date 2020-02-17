@@ -59,6 +59,8 @@
       this.button10 = new System.Windows.Forms.Button();
       this.checkBoxOriginalZoom = new System.Windows.Forms.CheckBox();
       this.panelOriginal = new System.Windows.Forms.Panel();
+      this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+      this.panel1 = new System.Windows.Forms.Panel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).BeginInit();
       this.panelHistY.SuspendLayout();
@@ -73,12 +75,14 @@
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.panelOriginal.SuspendLayout();
+      this.tableLayoutPanel1.SuspendLayout();
+      this.panel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // pictureBoxOriginal
       // 
       this.pictureBoxOriginal.Location = new System.Drawing.Point(0, 0);
-      this.pictureBoxOriginal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxOriginal.Margin = new System.Windows.Forms.Padding(4);
       this.pictureBoxOriginal.Name = "pictureBoxOriginal";
       this.pictureBoxOriginal.Size = new System.Drawing.Size(308, 543);
       this.pictureBoxOriginal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -88,7 +92,7 @@
       // pictureBoxHistY
       // 
       this.pictureBoxHistY.Location = new System.Drawing.Point(0, 0);
-      this.pictureBoxHistY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxHistY.Margin = new System.Windows.Forms.Padding(4);
       this.pictureBoxHistY.Name = "pictureBoxHistY";
       this.pictureBoxHistY.Size = new System.Drawing.Size(323, 415);
       this.pictureBoxHistY.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -100,16 +104,17 @@
       // 
       this.panelHistY.AutoScroll = true;
       this.panelHistY.Controls.Add(this.pictureBoxHistY);
-      this.panelHistY.Location = new System.Drawing.Point(332, 31);
-      this.panelHistY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.panelHistY.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelHistY.Location = new System.Drawing.Point(402, 34);
+      this.panelHistY.Margin = new System.Windows.Forms.Padding(4);
       this.panelHistY.Name = "panelHistY";
-      this.panelHistY.Size = new System.Drawing.Size(181, 543);
+      this.panelHistY.Size = new System.Drawing.Size(205, 559);
       this.panelHistY.TabIndex = 1;
       // 
       // labelErrorsX
       // 
       this.labelErrorsX.AutoSize = true;
-      this.labelErrorsX.Location = new System.Drawing.Point(1044, 619);
+      this.labelErrorsX.Location = new System.Drawing.Point(42, 616);
       this.labelErrorsX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelErrorsX.Name = "labelErrorsX";
       this.labelErrorsX.Size = new System.Drawing.Size(83, 17);
@@ -118,8 +123,8 @@
       // 
       // numericUpDownLevelX
       // 
-      this.numericUpDownLevelX.Location = new System.Drawing.Point(1184, 18);
-      this.numericUpDownLevelX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownLevelX.Location = new System.Drawing.Point(182, 15);
+      this.numericUpDownLevelX.Margin = new System.Windows.Forms.Padding(4);
       this.numericUpDownLevelX.Maximum = new decimal(new int[] {
             255,
             0,
@@ -132,8 +137,8 @@
       // 
       // numericUpDownLevelY
       // 
-      this.numericUpDownLevelY.Location = new System.Drawing.Point(1184, 50);
-      this.numericUpDownLevelY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownLevelY.Location = new System.Drawing.Point(182, 47);
+      this.numericUpDownLevelY.Margin = new System.Windows.Forms.Padding(4);
       this.numericUpDownLevelY.Maximum = new decimal(new int[] {
             255,
             0,
@@ -147,7 +152,7 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(1119, 18);
+      this.label1.Location = new System.Drawing.Point(27, 20);
       this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(55, 17);
@@ -157,7 +162,7 @@
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(1119, 53);
+      this.label2.Location = new System.Drawing.Point(27, 55);
       this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(55, 17);
@@ -166,8 +171,8 @@
       // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(1032, 165);
-      this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button1.Location = new System.Drawing.Point(30, 162);
+      this.button1.Margin = new System.Windows.Forms.Padding(4);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(119, 36);
       this.button1.TabIndex = 8;
@@ -178,7 +183,7 @@
       // labelErrorsY
       // 
       this.labelErrorsY.AutoSize = true;
-      this.labelErrorsY.Location = new System.Drawing.Point(1044, 635);
+      this.labelErrorsY.Location = new System.Drawing.Point(42, 632);
       this.labelErrorsY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelErrorsY.Name = "labelErrorsY";
       this.labelErrorsY.Size = new System.Drawing.Size(83, 17);
@@ -188,17 +193,19 @@
       // panelHistX
       // 
       this.panelHistX.AutoScroll = true;
+      this.tableLayoutPanel1.SetColumnSpan(this.panelHistX, 3);
       this.panelHistX.Controls.Add(this.pictureBoxHistX);
-      this.panelHistX.Location = new System.Drawing.Point(16, 581);
-      this.panelHistX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.panelHistX.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelHistX.Location = new System.Drawing.Point(4, 601);
+      this.panelHistX.Margin = new System.Windows.Forms.Padding(4);
       this.panelHistX.Name = "panelHistX";
-      this.panelHistX.Size = new System.Drawing.Size(943, 161);
+      this.panelHistX.Size = new System.Drawing.Size(1001, 177);
       this.panelHistX.TabIndex = 2;
       // 
       // pictureBoxHistX
       // 
       this.pictureBoxHistX.Location = new System.Drawing.Point(0, 0);
-      this.pictureBoxHistX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxHistX.Margin = new System.Windows.Forms.Padding(4);
       this.pictureBoxHistX.Name = "pictureBoxHistX";
       this.pictureBoxHistX.Size = new System.Drawing.Size(323, 319);
       this.pictureBoxHistX.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -210,9 +217,9 @@
       // 
       this.pictureBoxSolve.Dock = System.Windows.Forms.DockStyle.Fill;
       this.pictureBoxSolve.Location = new System.Drawing.Point(0, 0);
-      this.pictureBoxSolve.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.pictureBoxSolve.Margin = new System.Windows.Forms.Padding(4);
       this.pictureBoxSolve.Name = "pictureBoxSolve";
-      this.pictureBoxSolve.Size = new System.Drawing.Size(439, 543);
+      this.pictureBoxSolve.Size = new System.Drawing.Size(392, 563);
       this.pictureBoxSolve.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxSolve.TabIndex = 0;
       this.pictureBoxSolve.TabStop = false;
@@ -220,7 +227,7 @@
       // button2
       // 
       this.button2.Location = new System.Drawing.Point(19, 23);
-      this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button2.Margin = new System.Windows.Forms.Padding(4);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(240, 38);
       this.button2.TabIndex = 8;
@@ -231,7 +238,7 @@
       // button3
       // 
       this.button3.Location = new System.Drawing.Point(19, 69);
-      this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button3.Margin = new System.Windows.Forms.Padding(4);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(240, 38);
       this.button3.TabIndex = 8;
@@ -241,8 +248,8 @@
       // 
       // button4
       // 
-      this.button4.Location = new System.Drawing.Point(1173, 165);
-      this.button4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button4.Location = new System.Drawing.Point(171, 162);
+      this.button4.Margin = new System.Windows.Forms.Padding(4);
       this.button4.Name = "button4";
       this.button4.Size = new System.Drawing.Size(119, 36);
       this.button4.TabIndex = 8;
@@ -253,7 +260,7 @@
       // numericUpDownHStep
       // 
       this.numericUpDownHStep.Location = new System.Drawing.Point(184, 118);
-      this.numericUpDownHStep.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownHStep.Margin = new System.Windows.Forms.Padding(4);
       this.numericUpDownHStep.Maximum = new decimal(new int[] {
             255,
             0,
@@ -266,7 +273,7 @@
       // numericUpDownVStep
       // 
       this.numericUpDownVStep.Location = new System.Drawing.Point(184, 153);
-      this.numericUpDownVStep.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.numericUpDownVStep.Margin = new System.Windows.Forms.Padding(4);
       this.numericUpDownVStep.Maximum = new decimal(new int[] {
             255,
             0,
@@ -279,7 +286,7 @@
       // button5
       // 
       this.button5.Location = new System.Drawing.Point(19, 114);
-      this.button5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button5.Margin = new System.Windows.Forms.Padding(4);
       this.button5.Name = "button5";
       this.button5.Size = new System.Drawing.Size(157, 28);
       this.button5.TabIndex = 9;
@@ -290,7 +297,7 @@
       // button6
       // 
       this.button6.Location = new System.Drawing.Point(19, 150);
-      this.button6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button6.Margin = new System.Windows.Forms.Padding(4);
       this.button6.Name = "button6";
       this.button6.Size = new System.Drawing.Size(157, 28);
       this.button6.TabIndex = 9;
@@ -300,8 +307,9 @@
       // 
       // checkBoxSolveZoom
       // 
+      this.checkBoxSolveZoom.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.checkBoxSolveZoom.AutoSize = true;
-      this.checkBoxSolveZoom.Location = new System.Drawing.Point(712, 5);
+      this.checkBoxSolveZoom.Location = new System.Drawing.Point(777, 4);
       this.checkBoxSolveZoom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.checkBoxSolveZoom.Name = "checkBoxSolveZoom";
       this.checkBoxSolveZoom.Size = new System.Drawing.Size(66, 21);
@@ -314,16 +322,17 @@
       // 
       this.panelSolve.AutoScroll = true;
       this.panelSolve.Controls.Add(this.pictureBoxSolve);
-      this.panelSolve.Location = new System.Drawing.Point(520, 31);
+      this.panelSolve.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelSolve.Location = new System.Drawing.Point(614, 32);
       this.panelSolve.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.panelSolve.Name = "panelSolve";
-      this.panelSolve.Size = new System.Drawing.Size(439, 543);
+      this.panelSolve.Size = new System.Drawing.Size(392, 563);
       this.panelSolve.TabIndex = 11;
       // 
       // button7
       // 
       this.button7.Location = new System.Drawing.Point(16, 23);
-      this.button7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button7.Margin = new System.Windows.Forms.Padding(4);
       this.button7.Name = "button7";
       this.button7.Size = new System.Drawing.Size(100, 28);
       this.button7.TabIndex = 12;
@@ -334,7 +343,7 @@
       // button8
       // 
       this.button8.Location = new System.Drawing.Point(156, 23);
-      this.button8.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button8.Margin = new System.Windows.Forms.Padding(4);
       this.button8.Name = "button8";
       this.button8.Size = new System.Drawing.Size(100, 28);
       this.button8.TabIndex = 12;
@@ -345,8 +354,8 @@
       // button9
       // 
       this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.button9.Location = new System.Drawing.Point(1032, 222);
-      this.button9.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button9.Location = new System.Drawing.Point(30, 219);
+      this.button9.Margin = new System.Windows.Forms.Padding(4);
       this.button9.Name = "button9";
       this.button9.Size = new System.Drawing.Size(260, 59);
       this.button9.TabIndex = 13;
@@ -366,10 +375,10 @@
       this.groupBox1.Controls.Add(this.numericUpDownHStep);
       this.groupBox1.Controls.Add(this.numericUpDownVStep);
       this.groupBox1.Controls.Add(this.button6);
-      this.groupBox1.Location = new System.Drawing.Point(1029, 314);
-      this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox1.Location = new System.Drawing.Point(27, 311);
+      this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
       this.groupBox1.Size = new System.Drawing.Size(267, 196);
       this.groupBox1.TabIndex = 15;
       this.groupBox1.TabStop = false;
@@ -379,10 +388,10 @@
       // 
       this.groupBox2.Controls.Add(this.button7);
       this.groupBox2.Controls.Add(this.button8);
-      this.groupBox2.Location = new System.Drawing.Point(1032, 532);
-      this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox2.Location = new System.Drawing.Point(30, 529);
+      this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
       this.groupBox2.Size = new System.Drawing.Size(264, 71);
       this.groupBox2.TabIndex = 16;
       this.groupBox2.TabStop = false;
@@ -390,8 +399,8 @@
       // 
       // button10
       // 
-      this.button10.Location = new System.Drawing.Point(1032, 114);
-      this.button10.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.button10.Location = new System.Drawing.Point(30, 111);
+      this.button10.Margin = new System.Windows.Forms.Padding(4);
       this.button10.Name = "button10";
       this.button10.Size = new System.Drawing.Size(119, 36);
       this.button10.TabIndex = 17;
@@ -401,8 +410,9 @@
       // 
       // checkBoxOriginalZoom
       // 
+      this.checkBoxOriginalZoom.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.checkBoxOriginalZoom.AutoSize = true;
-      this.checkBoxOriginalZoom.Location = new System.Drawing.Point(135, 5);
+      this.checkBoxOriginalZoom.Location = new System.Drawing.Point(166, 4);
       this.checkBoxOriginalZoom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.checkBoxOriginalZoom.Name = "checkBoxOriginalZoom";
       this.checkBoxOriginalZoom.Size = new System.Drawing.Size(66, 21);
@@ -415,36 +425,67 @@
       // 
       this.panelOriginal.AutoScroll = true;
       this.panelOriginal.Controls.Add(this.pictureBoxOriginal);
-      this.panelOriginal.Location = new System.Drawing.Point(16, 31);
+      this.panelOriginal.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panelOriginal.Location = new System.Drawing.Point(3, 32);
       this.panelOriginal.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.panelOriginal.Name = "panelOriginal";
-      this.panelOriginal.Size = new System.Drawing.Size(309, 543);
+      this.panelOriginal.Size = new System.Drawing.Size(392, 563);
       this.panelOriginal.TabIndex = 19;
+      // 
+      // tableLayoutPanel1
+      // 
+      this.tableLayoutPanel1.ColumnCount = 4;
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 213F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 314F));
+      this.tableLayoutPanel1.Controls.Add(this.checkBoxOriginalZoom, 0, 0);
+      this.tableLayoutPanel1.Controls.Add(this.panelOriginal, 0, 1);
+      this.tableLayoutPanel1.Controls.Add(this.panelSolve, 2, 1);
+      this.tableLayoutPanel1.Controls.Add(this.panelHistY, 1, 1);
+      this.tableLayoutPanel1.Controls.Add(this.checkBoxSolveZoom, 2, 0);
+      this.tableLayoutPanel1.Controls.Add(this.panelHistX, 0, 2);
+      this.tableLayoutPanel1.Controls.Add(this.panel1, 3, 0);
+      this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+      this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+      this.tableLayoutPanel1.RowCount = 3;
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 185F));
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel1.Size = new System.Drawing.Size(1324, 782);
+      this.tableLayoutPanel1.TabIndex = 20;
+      // 
+      // panel1
+      // 
+      this.panel1.Controls.Add(this.label2);
+      this.panel1.Controls.Add(this.button10);
+      this.panel1.Controls.Add(this.label1);
+      this.panel1.Controls.Add(this.numericUpDownLevelX);
+      this.panel1.Controls.Add(this.groupBox2);
+      this.panel1.Controls.Add(this.button4);
+      this.panel1.Controls.Add(this.groupBox1);
+      this.panel1.Controls.Add(this.labelErrorsX);
+      this.panel1.Controls.Add(this.button9);
+      this.panel1.Controls.Add(this.labelErrorsY);
+      this.panel1.Controls.Add(this.button1);
+      this.panel1.Controls.Add(this.numericUpDownLevelY);
+      this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.panel1.Location = new System.Drawing.Point(1012, 3);
+      this.panel1.Name = "panel1";
+      this.tableLayoutPanel1.SetRowSpan(this.panel1, 3);
+      this.panel1.Size = new System.Drawing.Size(309, 776);
+      this.panel1.TabIndex = 20;
       // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1324, 782);
-      this.Controls.Add(this.panelOriginal);
-      this.Controls.Add(this.checkBoxOriginalZoom);
-      this.Controls.Add(this.button10);
-      this.Controls.Add(this.groupBox2);
-      this.Controls.Add(this.groupBox1);
-      this.Controls.Add(this.button9);
-      this.Controls.Add(this.panelSolve);
-      this.Controls.Add(this.checkBoxSolveZoom);
-      this.Controls.Add(this.button1);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.numericUpDownLevelY);
-      this.Controls.Add(this.numericUpDownLevelX);
-      this.Controls.Add(this.labelErrorsY);
-      this.Controls.Add(this.labelErrorsX);
-      this.Controls.Add(this.panelHistX);
-      this.Controls.Add(this.panelHistY);
-      this.Controls.Add(this.button4);
-      this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+      this.Controls.Add(this.tableLayoutPanel1);
+      this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "MainForm";
       this.Text = "Nonogram Solver. Copyright © MozgOFF, 2020";
       this.Load += new System.EventHandler(this.MainForm_Load);
@@ -462,8 +503,11 @@
       this.groupBox1.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.panelOriginal.ResumeLayout(false);
+      this.tableLayoutPanel1.ResumeLayout(false);
+      this.tableLayoutPanel1.PerformLayout();
+      this.panel1.ResumeLayout(false);
+      this.panel1.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
@@ -500,6 +544,8 @@
     private System.Windows.Forms.Button button10;
     private System.Windows.Forms.CheckBox checkBoxOriginalZoom;
     private System.Windows.Forms.Panel panelOriginal;
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+    private System.Windows.Forms.Panel panel1;
   }
 }
 
