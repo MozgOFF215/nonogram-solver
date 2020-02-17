@@ -61,6 +61,15 @@
   <ItemGroup>
     <Compile Include="BitmapUtils.cs" />
     <Compile Include="DescriptorData.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="LineAnalyzeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LineAnalyzeForm.Designer.cs">
+      <DependentUpon>LineAnalyzeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LineInfo.cs" />
+    <Compile Include="Logic.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +81,9 @@
     <Compile Include="SolveArea.cs" />
     <Compile Include="SolveLog.cs" />
     <Compile Include="Solver.cs" />
+    <EmbeddedResource Include="LineAnalyzeForm.resx">
+      <DependentUpon>LineAnalyzeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

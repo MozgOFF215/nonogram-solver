@@ -19,37 +19,23 @@ namespace mainView
     Solver _Solver = new Solver();
 
     Dictionary<int, int> histX;
-    Dictionary<int, int> dhistX;
     Dictionary<int, int> histY;
-    Dictionary<int, int> dhistY;
-    Dictionary<int, bool> histXboolean;
-    Dictionary<int, bool> histYboolean;
-
-    List<SourceCell> cellsX;
-    List<SourceCell> cellsY;
 
     Bitmap SourceBitmap;
     Bitmap GrayscaledSourceBitmap;
     Bitmap HistBitmapX;
     Bitmap HistBitmapY;
-    long maxValX;
-    long maxValY;
+    int maxValX;
+    int maxValY;
     int levelX, levelY;
 
     Image sourceImage;
 
-    class SourceCell
-    {
-      public int front;
-      public int posAfterFront;
-      public int width;
-      public int back;
-      public int number;
-    }
-
     void MainForm_Load(object sender, EventArgs e)
     {
-      sourceImage = Image.FromFile("images\\Screenshot_25x25_3.png");
+      sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
+      //sourceImage = Image.FromFile("images\\Screenshot_25x25.png");
+      //sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
 
       levelX = 60;
       levelY = 160;
@@ -69,38 +55,53 @@ namespace mainView
 
       GrayscaledSourceBitmap = BitmapUtils.MakeGrayscale3(new Bitmap(sourceImage));
 
+      checkBoxOriginalZoom.Checked = true;
       pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
       pictureBoxOriginal.Image = sourceImage;
 
-      checkBoxResultZoom.Checked = true;
+      checkBoxSolveZoom.Checked = true;
       pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
 
       histX = new Dictionary<int, int>();
       histY = new Dictionary<int, int>();
-      dhistX = new Dictionary<int, int>();
-      dhistY = new Dictionary<int, int>();
-      histXboolean = new Dictionary<int, bool>();
-      histYboolean = new Dictionary<int, bool>();
-      cellsX = new List<SourceCell>();
-      cellsY = new List<SourceCell>();
+
+      // search horizontal lines 
+      var level = 150;
+      var markedLinesY = Logic.SearchLines(
+        GrayscaledSourceBitmap.Height,
+        GrayscaledSourceBitmap.Width,
+        level,
+        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
+      );
+
+      // prepare crop from up and down
+      var startY = markedLinesY.First().start;
+      var endY = markedLinesY.Last().start + markedLinesY.Last().length;
+      var heightY = endY - startY + 1;
+
+      // crop bitmap
+      GrayscaledSourceBitmap = Logic.Crop(GrayscaledSourceBitmap, startY - 5, heightY + 10);
+      pictureBoxOriginal.Image = GrayscaledSourceBitmap;
+
+      // second iteration while bitmap croped
+      markedLinesY = Logic.SearchLines(
+        GrayscaledSourceBitmap.Height,
+        GrayscaledSourceBitmap.Width,
+        level,
+        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
+      );
+
+      // search vertical lines
+      var markedLinesX = Logic.SearchLines(
+        GrayscaledSourceBitmap.Width,
+        GrayscaledSourceBitmap.Height,
+        150,
+        (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R
+      );
 
       // gen histograms for Y
-      {
-        double prev = 0;
-        for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
-        {
-          long hist = 0;
-          for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
-          {
-            Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
-            hist += pixelColor.R;
-          }
-          var res = hist / (double)GrayscaledSourceBitmap.Width;
-          histY[y] = (int)res;
-          dhistY[y] = (int)(res - prev);
-          prev = res;
-        }
-      }
+      histY = Logic.GenHistogram(GrayscaledSourceBitmap.Height, GrayscaledSourceBitmap.Width,
+        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R);
 
       // histogram Y analyze
       maxValY = histY.Select(i => i.Value).Max();
@@ -109,65 +110,14 @@ namespace mainView
       pictureBoxHistY.Width = panelHistY.Width - 20;
 
       HistBitmapY = new Bitmap(pictureBoxHistY.Width, GrayscaledSourceBitmap.Height);
-      refreshHistY(levelY, histY, histYboolean, HistBitmapY);
+      Logic.RefreshHistY(levelY, histY, HistBitmapY, markedLinesY, maxValY);
 
       pictureBoxHistY.Image = HistBitmapY;
       pictureBoxHistY.SizeMode = PictureBoxSizeMode.Zoom;
 
-      fillCellTable(histYboolean, cellsY);
-      var analyzY = analyzeCells(cellsY);
-      var validWidthsY = getValidWidths(analyzY);
-      var validCellsY = cellsY.Where(i => validWidthsY.Any(j => j == i.width)).OrderBy(i => i.number).ToArray();
-      var errorY = checkCells(validCellsY, "Y", labelErrorsY);
-
       // gen histograms for X
-      {
-        double prev = 0;
-        for (int x = 0; x < GrayscaledSourceBitmap.Width; x++)
-        {
-          long hist = 0;
-          //for (int y = 0; y < GrayscaledSourceBitmap.Height; y++)
-          for (int y = validCellsY.First().posAfterFront - validCellsY.First().front; y < validCellsY.Last().posAfterFront + validCellsY.Last().width + validCellsY.Last().back; y++)
-          {
-            Color pixelColor = GrayscaledSourceBitmap.GetPixel(x, y);
-            hist += pixelColor.R;
-          }
-          var res = hist / (double)GrayscaledSourceBitmap.Height;
-          histX[x] = (int)res;
-          dhistX[x] = (int)(res - prev);
-          prev = res;
-        }
-      }
-      // diff hist X analyze
-      var dMaxValX = dhistX.Select(i => i.Value).Max();
-      var dMinValX = dhistX.Select(i => i.Value).Min();
-
-      pictureBoxAccelerate.Height = panelAccelerate.Height - 40;
-      pictureBoxAccelerate.Width = GrayscaledSourceBitmap.Width;
-
-      var DHistBitmapX = new Bitmap(GrayscaledSourceBitmap.Width, pictureBoxAccelerate.Height);
-
-      pictureBoxAccelerate.Image = DHistBitmapX;
-      pictureBoxAccelerate.SizeMode = PictureBoxSizeMode.Zoom;
-
-
-      bool toDown = false;
-      int xToDown = 0;
-      bool toUp = false;
-      int xToUp = 0;
-      for (int x = 0; x < dhistX.Count; x++)
-      {
-        if (dhistX[x] < 30 && !toDown) { toDown = true; xToDown = x; }
-        if (dhistX[x] > 10 && toDown)
-        {
-          toDown = false;
-          DHistBitmapX.SetPixel(x, 5, Color.Red);
-          toUp = true; xToUp = x;
-        }
-        var y = (dhistX[x] - dMinValX) * (DHistBitmapX.Height - 1) / (double)(dMaxValX - dMinValX);
-        for (int i = 10; i < y; i++)
-          DHistBitmapX.SetPixel(x, i, Color.Black);
-      }
+      histX = Logic.GenHistogram(GrayscaledSourceBitmap.Width, GrayscaledSourceBitmap.Height,
+        (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R);
 
       // histogram X analyze
       maxValX = histX.Select(i => i.Value).Max();
@@ -176,201 +126,21 @@ namespace mainView
       pictureBoxHistX.Width = GrayscaledSourceBitmap.Width;
 
       HistBitmapX = new Bitmap(GrayscaledSourceBitmap.Width, pictureBoxHistX.Height);
-      refreshHistX(levelX, histX, histXboolean, HistBitmapX);
+      Logic.RefreshHistX(levelX, histX, HistBitmapX, markedLinesX, maxValX);
 
       pictureBoxHistX.Image = HistBitmapX;
       pictureBoxHistX.SizeMode = PictureBoxSizeMode.Zoom;
 
-      fillCellTable(histXboolean, cellsX);
-      var analyzX = analyzeCells(cellsX);
-      var validWidthsX = getValidWidths(analyzX);
-      var validCellsX = cellsX.Where(i => validWidthsX.Any(j => j == i.width)).OrderBy(i => i.number).ToArray();
-      var errorX = checkCells(validCellsX, "X", labelErrorsX);
-
-      if (!errorY && !errorX)
+      try
       {
-        var res = OCR(validCellsX, validCellsY);
-
-        _Solver.SolvePreparation(res);
-
+        var resOCR = Logic.OCR(markedLinesX, markedLinesY, GrayscaledSourceBitmap.GetPixel);
+        _Solver.SolvePreparation(resOCR);
         ShowSolvePlayArea();
       }
-
-    }
-
-    List<List<int>> OCR(SourceCell[] validCellsX, SourceCell[] validCellsY)
-    {
-      var res = new List<List<int>>();
-      for (int iy = 0; iy < validCellsY.Length; iy++)
+      catch
       {
-        var resX = new List<int>();
-        for (int ix = 0; ix < validCellsX.Length; ix++)
-        {
-          var widthX = validCellsX[ix].width;
-          var widthY = validCellsY[iy].width;
-          var bSprite = new Bitmap(widthX, widthY);
-
-          long fullnessI = 0;
-
-          for (int y = 0; y < widthY; y++)
-            for (int x = 0; x < widthX; x++)
-            {
-              var pixColor = GrayscaledSourceBitmap.GetPixel(validCellsX[ix].posAfterFront + x, validCellsY[iy].posAfterFront + y);
-
-              if (x == 0 || y == 0 || y == widthY - 1 || x == widthX - 1)
-                pixColor = Color.White;
-
-              if (pixColor.R > 192) pixColor = Color.White;
-              //else pixColor = Color.Black;
-
-              bSprite.SetPixel(x, y, pixColor);
-              fullnessI += 255 - pixColor.R;
-            }
-          var fullness = fullnessI / widthY / widthX;
-          var value = 0;
-          if (fullness > 10)
-          {
-            try
-            {
-              tessnet2.Tesseract ocr = new tessnet2.Tesseract();
-              ocr.SetVariable("tessedit_char_whitelist", "0123456789");
-              ocr.Init(@"", "eng", false);
-              List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
-              value = Convert.ToInt32(string.Join("", result.Select(i => i.Text)));
-              bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
-            }
-            catch { }
-          }
-          resX.Add(value);
-        }
-        res.Add(resX);
-      }
-
-      return res;
-    }
-
-    void refreshHistX(long level, Dictionary<int, int> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
-    {
-      foreach (var hist in histDictionary)
-      {
-        if (hist.Value < level)
-        {
-          histBoolean[hist.Key] = false;
-        }
-        else
-        {
-          histBoolean[hist.Key] = true;
-        }
-
-        for (int i = 0; i < resultBooleanHistogram.Height; i++)
-        {
-          if (i < 10)
-          {
-            if (hist.Value < level)
-            {
-              resultBooleanHistogram.SetPixel(hist.Key, i, Color.White);
-            }
-            else
-            {
-              resultBooleanHistogram.SetPixel(hist.Key, i, Color.Blue);
-            }
-          }
-          else
-          {
-            if ((i - 10) < hist.Value * (resultBooleanHistogram.Height - 10) / maxValX)
-              resultBooleanHistogram.SetPixel(hist.Key, i, Color.Gray);
-            else
-              resultBooleanHistogram.SetPixel(hist.Key, i, Color.White);
-
-          }
-        }
-      }
-    }
-
-    void refreshHistY(long level, Dictionary<int, int> histDictionary, Dictionary<int, bool> histBoolean, Bitmap resultBooleanHistogram)
-    {
-      foreach (var hist in histDictionary)
-      {
-        for (int i = 0; i < resultBooleanHistogram.Width; i++)
-        {
-          if (i < 10)
-          {
-            if (hist.Value < level)
-            {
-              resultBooleanHistogram.SetPixel(i, hist.Key, Color.White);
-              histBoolean[hist.Key] = false;
-            }
-            else
-            {
-              resultBooleanHistogram.SetPixel(i, hist.Key, Color.Blue);
-              histBoolean[hist.Key] = true;
-            }
-          }
-          else
-          {
-            if ((i - 10) < hist.Value * (resultBooleanHistogram.Width - 10) / maxValY)
-              resultBooleanHistogram.SetPixel(i, hist.Key, Color.Gray);
-            else resultBooleanHistogram.SetPixel(i, hist.Key, Color.White);
-
-          }
-        }
-      }
-    }
-
-    void fillCellTable(Dictionary<int, bool> histboolean, List<SourceCell> cells)
-    {
-      var lastV = false;
-      var front = 0;
-      var number = 0;
-      var currentCell = default(SourceCell);
-
-      foreach (var hist in histboolean)
-      {
-        if (hist.Value != lastV)
-        {
-          if (hist.Value)
-          {
-            if (currentCell != null)
-            {
-              currentCell.back = hist.Key - currentCell.posAfterFront - currentCell.width;
-              front = currentCell.back;
-              currentCell.number = number++;
-              cells.Add(currentCell);
-            }
-            currentCell = new SourceCell { front = front, posAfterFront = hist.Key };
-          }
-          else
-          {
-            currentCell.width = hist.Key - currentCell.posAfterFront;
-          }
-          lastV = hist.Value;
-        }
 
       }
-    }
-
-    Dictionary<int, int> analyzeCells(List<SourceCell> cells)
-    {
-      var res = new Dictionary<int, int>();
-      int val;
-      foreach (var cell in cells)
-      {
-        if (res.TryGetValue(cell.width, out val))
-        {
-          res[cell.width] = val + 1;
-        }
-        else res[cell.width] = 1;
-      }
-      return res;
-    }
-
-    int[] getValidWidths(Dictionary<int, int> analyzed)
-    {
-      var maxFreq = analyzed.Max(i => i.Value);
-      var maxWidth = analyzed.FirstOrDefault(i => i.Value == maxFreq).Key;
-      var limMin90 = maxWidth * 0.9;
-      var limMax90 = maxWidth / 0.9;
-      return analyzed.Where(i => limMin90 < i.Key && i.Key < limMax90).Select(i => i.Key).ToArray();
     }
 
     private void numericUpDownLevelX_ValueChanged(object sender, EventArgs e)
@@ -386,22 +156,6 @@ namespace mainView
     private void button1_Click(object sender, EventArgs e)
     {
       DrawAndAnalyze();
-    }
-
-    bool checkCells(SourceCell[] validCells, string axisName, Label label)
-    {
-      var prevNumb = -1;
-      foreach (var cell in validCells)
-      {
-        if (cell.number - prevNumb > 1 && prevNumb != -1)
-        {
-          label.Text = $"{axisName} errors: The cells do not go one after another.";
-          return true;
-        }
-        else prevNumb = cell.number;
-      }
-      label.Text = $"axis {axisName} - ok, valid cells:{validCells.Length}";
-      return false; // no errors
     }
 
     private void button2_Click(object sender, EventArgs e)
@@ -434,21 +188,27 @@ namespace mainView
       ShowSolvePlayArea();
     }
 
-    private void checkBoxResultZoom_CheckedChanged(object sender, EventArgs e)
+    private void checkBoxSolveZoom_CheckedChanged(object sender, EventArgs e)
     {
-      if (checkBoxResultZoom.Checked)
+      ZoomProcessing(pictureBoxSolve, checkBoxSolveZoom);
+    }
+
+    private void ZoomProcessing(PictureBox pictureBox, CheckBox checkBox)
+    {
+      if (checkBox.Checked)
       {
-        pictureBoxSolve.Dock = DockStyle.Fill;
-        pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
+        pictureBox.Dock = DockStyle.Fill;
+        pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
       }
       else
       {
-        var bitmap = pictureBoxSolve.Image;
-        pictureBoxSolve.Width = bitmap.Width;
-        pictureBoxSolve.Height = bitmap.Height;
+        var bitmap = pictureBox.Image;
+        if (bitmap == null) return;
+        pictureBox.Width = bitmap.Width;
+        pictureBox.Height = bitmap.Height;
 
-        pictureBoxSolve.Dock = DockStyle.None;
-        pictureBoxSolve.SizeMode = PictureBoxSizeMode.Normal;
+        pictureBox.Dock = DockStyle.None;
+        pictureBox.SizeMode = PictureBoxSizeMode.Normal;
       }
     }
 
@@ -498,6 +258,23 @@ namespace mainView
       }
     }
 
+    private void checkBoxOriginalZoom_CheckedChanged(object sender, EventArgs e)
+    {
+      ZoomProcessing(pictureBoxOriginal, checkBoxOriginalZoom);
+    }
+
+    private void pictureBoxHistY_Click(object sender, EventArgs e)
+    {
+      var lineAnalizeForm = new LineAnalyzeForm(GrayscaledSourceBitmap, (e as MouseEventArgs).Y, false);
+      lineAnalizeForm.Show();
+    }
+
+    private void pictureBoxHistX_Click(object sender, EventArgs e)
+    {
+      var lineAnalizeForm = new LineAnalyzeForm(GrayscaledSourceBitmap, (e as MouseEventArgs).X, true);
+      lineAnalizeForm.Show();
+    }
+
     void ShowSolvePlayArea()
     {
 
@@ -519,7 +296,7 @@ namespace mainView
       var bitmap = new Bitmap(widthCell * (sizePA_X + sizeDescr_X) + netWidth, widthCell * (sizePA_Y + sizeDescr_Y) + netWidth);
       pictureBoxSolve.Image = bitmap;
 
-      if (!checkBoxResultZoom.Checked)
+      if (!checkBoxSolveZoom.Checked)
       {
         pictureBoxSolve.Width = bitmap.Width;
         pictureBoxSolve.Height = bitmap.Height;
