@@ -2,19 +2,29 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
+using Tesseract;
 
 namespace mainView
 {
+  class ocrItem
+  {
+    public int x, y; // in table SolveArea
+    public bool isDescriptor;
+    public bool hasNumber;
+    public int bitmapX, bitmapY, width, height;
+    public int value;
+  }
+
   class Logic
   {
-    static int counter = 0;
     static public List<MarkedLineInfo> SearchLines(int numberOfLines, int lineSize, int level, Func<int, int, int> getColor)
     {
-      counter++;
       var markedLines = new List<MarkedLineInfo>();
       var lastYwithMarkedLine = -10;
+      var lineCounter = 0;
       for (int y = 0; y < numberOfLines; y++)
       {
         var lines = new List<LineInfo>();
@@ -60,7 +70,7 @@ namespace mainView
             markedLines.Last().lineInfos.Add(lineWithMaxLength);
           }
           else
-            markedLines.Add(new MarkedLineInfo { lineInfos = new List<LineInfo> { lineWithMaxLength }, start = y, length = 1 });
+            markedLines.Add(new MarkedLineInfo { lineInfos = new List<LineInfo> { lineWithMaxLength }, start = y, length = 1, number = lineCounter++ });
 
           lastYwithMarkedLine = y;
         }
@@ -69,60 +79,252 @@ namespace mainView
       return markedLines;
     }
 
-    static public List<List<int>> OCR(List<MarkedLineInfo> markedLinesX, List<MarkedLineInfo> markedLinesY, Func<int, int, Color> getPixel)
+    static public List<List<ocrItem>> OCR(List<MarkedLineInfo> markedLinesX, List<MarkedLineInfo> markedLinesY, Func<int, int, Color> getPixel)
     {
-      var res = new List<List<int>>();
+      int descrXwidth, descrYheight;
+      SearchDataBounds(markedLinesX, markedLinesY, out descrXwidth, out descrYheight);
+
+      var res = new List<List<ocrItem>>();
+      var fullWidthResultSprite = 0;
+      var maxHeightResultSprite = 0;
+      var maxWidthResultSprite = 0;
+      var fullHeightResultSprite = 0;
       for (int iy = 0; iy < markedLinesY.Count - 1; iy++)
       {
-        var resX = new List<int>();
+        var resX = new List<ocrItem>();
         for (int ix = 0; ix < markedLinesX.Count - 1; ix++)
         {
-          var widthX = markedLinesX[ix + 1].start - markedLinesX[ix].after;
-          var widthY = markedLinesY[iy + 1].start - markedLinesY[iy].after;
-          var bSprite = new Bitmap(widthX, widthY);
-
-          long fullnessI = 0;
-
-          for (int y = 0; y < widthY; y++)
-            for (int x = 0; x < widthX; x++)
-            {
-              //var pixColor = GrayscaledSourceBitmap.GetPixel(validCellsX[ix].posAfterFront + x, validCellsY[iy].posAfterFront + y);
-              var pixColor = getPixel(x + markedLinesX[ix].after, y + markedLinesY[iy].after);
-
-              if (x == 0 || y == 0 || y == widthY - 1 || x == widthX - 1)
-                pixColor = Color.White;
-
-              if (pixColor.R > 192) pixColor = Color.White;
-              //else pixColor = Color.Black;
-
-              bSprite.SetPixel(x, y, pixColor);
-              fullnessI += 255 - pixColor.R;
-            }
-          var fullness = fullnessI / widthY / widthX;
-          var value = 0;
-          if (fullness > 10)
+          var newDescriptor = new ocrItem { x = ix, y = iy };
+          if ((ix < descrXwidth && iy >= descrYheight) || (iy < descrYheight && ix >= descrXwidth))
           {
-            try
-            {
-              tessnet2.Tesseract ocr = new tessnet2.Tesseract();
-              ocr.SetVariable("tessedit_char_whitelist", "0123456789");
-              ocr.Init(@"", "eng", false);
-              List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
-              if (int.TryParse(string.Join("", result.Select(i => i.Text)), out value))
-                bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
-              else
-                bSprite.Save($".\\digitals\\unknown {ix:00}-{iy:00}.png", ImageFormat.Png);
-            }
-            catch (Exception e)
-            {
-            }
+            newDescriptor.isDescriptor = true;
+
+            var widthX = markedLinesX[ix + 1].start - markedLinesX[ix].after;
+            var widthY = markedLinesY[iy + 1].start - markedLinesY[iy].after;
+
+            newDescriptor.bitmapX = markedLinesX[ix].after;
+            newDescriptor.bitmapY = markedLinesY[iy].after;
+
+            newDescriptor.width = widthX;
+            newDescriptor.height = widthY;
+
+            fullWidthResultSprite += widthX;
+            maxHeightResultSprite = widthY > maxHeightResultSprite ? widthY : maxHeightResultSprite;
+
+            fullHeightResultSprite += widthY;
+            maxWidthResultSprite = widthX > maxWidthResultSprite ? widthX : maxWidthResultSprite;
+
+            long fullnessI = 0;
+
+            for (int y = 0; y < widthY; y++)
+              for (int x = 0; x < widthX; x++)
+              {
+                var pixColor = getPixel(x + markedLinesX[ix].after, y + markedLinesY[iy].after);
+
+                fullnessI += 255 - pixColor.R;
+              }
+
+            var fullness = fullnessI / widthY / widthX;
+            if (fullness > 10) newDescriptor.hasNumber = true;
           }
-          resX.Add(value);
+          resX.Add(newDescriptor);
         }
         res.Add(resX);
       }
 
+      var fullBmpH = new Bitmap(fullWidthResultSprite, maxHeightResultSprite);
+      var fullBmpV = new Bitmap(maxWidthResultSprite, fullHeightResultSprite);
+      var grH = Graphics.FromImage(fullBmpH);
+      var grV = Graphics.FromImage(fullBmpV);
+
+      var currentX = 0;
+      var currentY = 0;
+      foreach (var line in res)
+        foreach (var cell in line)
+        {
+          if (cell.isDescriptor && cell.hasNumber)
+          {
+            var bSprite = new Bitmap(cell.width, cell.height);
+            long fullnessI = 0;
+
+            for (int y = 0; y < cell.height; y++)
+              for (int x = 0; x < cell.width; x++)
+              {
+                var pixColor = getPixel(x + cell.bitmapX, y + cell.bitmapY);
+
+                if (x == 0 || y == 0 || y == cell.height - 1 || x == cell.width - 1)
+                  pixColor = Color.White;
+
+                if (pixColor.R > 192) pixColor = Color.White;
+                else pixColor = Color.Black;
+
+                fullnessI += 255 - pixColor.R;
+                bSprite.SetPixel(x, y, pixColor);
+              }
+
+            var fullness = fullnessI / cell.height / cell.width;
+            if (fullness < 10) continue;
+
+            var resV2 = OCRBitmapV2(bSprite);
+            var resV3 = OCRBitmapV3(bSprite);
+
+            var value = 0;
+            if (resV2.Item1 == "~")
+            {
+              value = 8;
+              //value = string.IsNullOrWhiteSpace(resV3.Item1) ? resV2.Item2 : Int32.Parse(resV3.Item1);
+            }
+            else
+            {
+              value = resV2.Item2;
+              var val2 = string.IsNullOrWhiteSpace(resV3.Item1) ? value : Int32.Parse(resV3.Item1);
+              if (value != val2)
+              {
+
+              }
+            }
+
+            cell.value = value;
+
+            SaveOCRResult(cell, resV2, resV3, bSprite);
+
+            grH.DrawImage(bSprite, currentX, 0);
+            currentX += cell.width;
+
+            grV.DrawImage(bSprite, 0, currentY);
+            currentY += cell.height;
+
+          }
+        }
+
       return res;
+    }
+
+    const string ocrResultsPath = @"./ocr-results";
+    const string ocrReportName = "ocr-report.csv";
+
+    public static void InitOCRResultSaver()
+    {
+      if (!Directory.Exists(ocrResultsPath)) Directory.CreateDirectory(@ocrResultsPath);
+      else foreach (var file in new DirectoryInfo(ocrResultsPath).GetFiles()) file.Delete();
+
+      return;
+      using (var file = new StreamWriter($"{ocrResultsPath}/{ocrReportName}"))
+      {
+        file.WriteLine($"x;y;v2 text;v2 value;v3 text;v3 block;v3 exception");
+      }
+    }
+
+    private static void SaveOCRResult(ocrItem cell, Tuple<string, int> resV2, Tuple<string, string, string> resV3, Bitmap bSprite)
+    {
+      return;
+      var prefixName = $"{cell.x:00}-{cell.y:00}";
+      bSprite.Save($"{ocrResultsPath}/{prefixName}.png", System.Drawing.Imaging.ImageFormat.Png);
+
+      using (var file = new StreamWriter($"{ocrResultsPath}/{ocrReportName}", true))
+      {
+        file.WriteLine($"{cell.x:00};{cell.y:00};{resV2.Item1};{resV2.Item2};{resV3.Item1};{""};{(resV3.Item3 != null ? "excepted" : "")}");
+      }
+    }
+
+    static Tuple<string, int> OCRBitmapV2(Bitmap bSprite)
+    {
+      tessnet2.Tesseract ocr = new tessnet2.Tesseract();
+      //ocr.Init(@"./tessdata2", "en", true);
+      ocr.SetVariable("tessedit_char_whitelist", "0123456789B");
+      ocr.Init(@"", "eng", false);
+      List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
+      var resultText = string.Join("", result.Select(i => i.Text));
+      var resultValue = -101;
+      if (int.TryParse(resultText, out resultValue)) { }
+      //  bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
+      //else
+      //  bSprite.Save($".\\digitals\\unknown {ix:00}-{iy:00}.png", ImageFormat.Png);
+
+      return new Tuple<string, int>(resultText, resultValue);
+    }
+
+    static Tuple<string, string, string> OCRBitmapV3(Bitmap fullBmp)
+    {
+      string textResult = null;
+      string blocksResult = null;
+      string exceptionString = null;
+
+      return new Tuple<string, string, string>(textResult, blocksResult, exceptionString);
+
+      try
+      {
+        using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
+        {
+          engine.SetVariable("tessedit_char_whitelist", "0123456789B");
+          using (var page = engine.Process(fullBmp))
+          {
+
+            textResult = page.GetText();
+
+            blocksResult = "";
+            using (var iter = page.GetIterator())
+            {
+              iter.Begin();
+              do
+              {
+                do
+                {
+                  do
+                  {
+                    do
+                    {
+                      if (iter.IsAtBeginningOf(PageIteratorLevel.Block))
+                      {
+                        blocksResult += ConsoleWriteLine("<BLOCK>");
+                      }
+
+                      blocksResult += ConsoleWrite(iter.GetText(PageIteratorLevel.Word));
+                      blocksResult += ConsoleWrite("_");
+
+                      if (iter.IsAtFinalOf(PageIteratorLevel.TextLine, PageIteratorLevel.Word))
+                      {
+                        blocksResult += ConsoleWriteLine("%");
+                      }
+                    } while (iter.Next(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
+
+                    if (iter.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
+                    {
+                      blocksResult += ConsoleWriteLine("§");
+                    }
+                  } while (iter.Next(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
+                } while (iter.Next(PageIteratorLevel.Block, PageIteratorLevel.Para));
+              } while (iter.Next(PageIteratorLevel.Block));
+            }
+
+            //if (int.TryParse(text, out newDescriptor.value))
+            //  fullBmp.Save($"{ocrResultsPath}/{newDescriptor.value} {ix:00}-{iy:00}.png", System.Drawing.Imaging.ImageFormat.Png);
+            //else
+            //fullBmp.Save($"{ocrResultsPath}/full bmp.png", System.Drawing.Imaging.ImageFormat.Png);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        exceptionString = e.ToString();
+      }
+      return new Tuple<string, string, string>(textResult, blocksResult, exceptionString);
+    }
+
+    private static string ConsoleWrite(string v)
+    {
+      return v;
+    }
+
+    private static string ConsoleWriteLine(string v)
+    {
+      return v + Environment.NewLine;
+    }
+
+    internal static void SearchDataBounds(List<MarkedLineInfo> markedLinesX, List<MarkedLineInfo> markedLinesY, out int descrXwidth, out int descrYheight)
+    {
+      descrXwidth = markedLinesX.Where(i => i.lineInfos.OrderByDescending(j => j.length).First().start > 50).Count() + 1;
+      descrYheight = markedLinesY.Where(i => i.lineInfos.OrderByDescending(j => j.length).First().start > 50).Count() + 1;
     }
 
     internal static Bitmap Crop(Bitmap bitmap, int startY, int heightY)

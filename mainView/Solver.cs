@@ -7,7 +7,7 @@ namespace mainView
 {
   class Solver
   {
-    List<List<int>> sourceData;
+    List<List<ocrItem>> sourceData;
     int SizeX, SizeY;
     public SolveArea PlayArea;
     public List<DescriptorData>[] rowDescrV;
@@ -18,7 +18,7 @@ namespace mainView
       PlayArea.Clear();
     }
 
-    public void SolvePreparation(List<List<int>> sourceData)
+    public void SolvePreparation(List<List<ocrItem>> sourceData)
     {
       this.sourceData = sourceData;
 
@@ -27,7 +27,7 @@ namespace mainView
 
       for (int i = lastLine.Count - 1; i >= 0; i--)
       {
-        if (lastLine[i] == 0) pos = i;
+        if (lastLine[i].value == 0) pos = i;
         else break;
       }
 
@@ -35,7 +35,7 @@ namespace mainView
 
       for (int i = sourceData.Count - 1; i >= 0; i--)
       {
-        if (sourceData[i].Skip(sourceData[i].Count - 2).FirstOrDefault() == 0) pos = i;
+        if (sourceData[i].Skip(sourceData[i].Count - 2).FirstOrDefault().value == 0) pos = i;
         else break;
       }
 
@@ -57,7 +57,7 @@ namespace mainView
         {
           if (rowDescrV[x] == null) rowDescrV[x] = new List<DescriptorData>();
           var xx = x + sourceData[0].Count - SizeX;
-          if (sourceData[y][xx] > 0) rowDescrV[x].Add(new DescriptorData(true, x, rowDescrV[x].Count, SizeY, sourceData[y][xx]));
+          if (sourceData[y][xx].value > 0) rowDescrV[x].Add(new DescriptorData(true, x, rowDescrV[x].Count, SizeY, sourceData[y][xx].value));
         }
 
       for (int x = 0; x < sourceData[0].Count - SizeX; x++)
@@ -65,7 +65,7 @@ namespace mainView
         {
           if (rowDescrH[y] == null) rowDescrH[y] = new List<DescriptorData>();
           var yy = y + sourceData.Count - SizeY;
-          if (sourceData[yy][x] > 0) rowDescrH[y].Add(new DescriptorData(false, y, rowDescrH[y].Count, SizeX, sourceData[yy][x]));
+          if (sourceData[yy][x].value > 0) rowDescrH[y].Add(new DescriptorData(false, y, rowDescrH[y].Count, SizeX, sourceData[yy][x].value));
         }
     }
 

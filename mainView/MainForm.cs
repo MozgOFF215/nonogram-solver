@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -33,9 +34,12 @@ namespace mainView
 
     void MainForm_Load(object sender, EventArgs e)
     {
-      sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
-      //sourceImage = Image.FromFile("images\\Screenshot_25x25.png");
+      Logic.InitOCRResultSaver();
+
       //sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
+      //sourceImage = Image.FromFile("images\\Screenshot_25x25.png");
+      sourceImage = Image.FromFile("images\\Screenshot_25x25_2.png");
+      //sourceImage = Image.FromFile("images\\Screenshot_25x25_3.png");
 
       levelX = 60;
       levelY = 160;

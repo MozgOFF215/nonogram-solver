@@ -18,5 +18,6 @@ namespace mainView
     public int start;
     public int length;
     public int after => start + length;
+    public int number;
   }
 }
