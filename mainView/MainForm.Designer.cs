@@ -223,6 +223,7 @@
       this.pictureBoxSolve.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxSolve.TabIndex = 0;
       this.pictureBoxSolve.TabStop = false;
+      this.pictureBoxSolve.Click += new System.EventHandler(this.pictureBoxSolve_Click);
       // 
       // button2
       // 
@@ -438,7 +439,7 @@
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 213F));
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 314F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 315F));
       this.tableLayoutPanel1.Controls.Add(this.checkBoxOriginalZoom, 0, 0);
       this.tableLayoutPanel1.Controls.Add(this.panelOriginal, 0, 1);
       this.tableLayoutPanel1.Controls.Add(this.panelSolve, 2, 1);

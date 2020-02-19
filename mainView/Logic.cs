@@ -230,16 +230,12 @@ namespace mainView
     static Tuple<string, int> OCRBitmapV2(Bitmap bSprite)
     {
       tessnet2.Tesseract ocr = new tessnet2.Tesseract();
-      //ocr.Init(@"./tessdata2", "en", true);
       ocr.SetVariable("tessedit_char_whitelist", "0123456789B");
       ocr.Init(@"", "eng", false);
       List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
       var resultText = string.Join("", result.Select(i => i.Text));
       var resultValue = -101;
       if (int.TryParse(resultText, out resultValue)) { }
-      //  bSprite.Save($".\\digitals\\{string.Join("", result.Select(i => i.Text.Replace("|", "I")))} {string.Join("_", result.Select(i => i.Confidence))} {ix:00}-{iy:00}.png", ImageFormat.Png);
-      //else
-      //  bSprite.Save($".\\digitals\\unknown {ix:00}-{iy:00}.png", ImageFormat.Png);
 
       return new Tuple<string, int>(resultText, resultValue);
     }

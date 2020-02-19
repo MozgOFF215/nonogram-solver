@@ -18,6 +18,11 @@ namespace mainView
       _y = y;
     }
 
+    public int bitmapX, bitmapY;
+    public int bitmapWidth, bitmapHeight;
+
+    public bool isTarget(int x, int y) => bitmapX < x && x < bitmapX + bitmapWidth - 1 && bitmapY < y && y < bitmapY + bitmapHeight - 1;
+
     public TCell Value { get { return _tCell; } }
 
     public void Set(TCell tCell, string key)
@@ -25,7 +30,7 @@ namespace mainView
       if (_tCell != tCell)
       {
         SolveLog.Instance.LogPA(key, _tCell, tCell, _x, _y);
-      _tCell = tCell;
+        _tCell = tCell;
       }
     }
 

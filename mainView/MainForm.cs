@@ -50,7 +50,19 @@ namespace mainView
       DrawAndAnalyze(sourceImage);
     }
 
-    void DrawAndAnalyze(Image sourceImage = null)
+    private void DrawAndAnalyze(Image sourceImage = null)
+    {
+      try
+      {
+        _DrawAndAnalyze(sourceImage);
+      }
+      catch (Exception e)
+      {
+        ShowError("Analyze and Solve error", e.ToString());
+      }
+    }
+
+    void _DrawAndAnalyze(Image sourceImage)
     {
       sourceImage = sourceImage == null ? this.sourceImage : sourceImage;
       this.sourceImage = sourceImage;
@@ -139,12 +151,18 @@ namespace mainView
       {
         var resOCR = Logic.OCR(markedLinesX, markedLinesY, GrayscaledSourceBitmap.GetPixel);
         _Solver.SolvePreparation(resOCR);
-        ShowSolvePlayArea();
       }
-      catch
+      catch (Exception e)
       {
-
+        ShowError("OCR error", e.ToString());
       }
+
+      ShowSolvePlayArea();
+    }
+
+    private void ShowError(string capture, string text)
+    {
+      MessageBox.Show(text, capture);
     }
 
     private void numericUpDownLevelX_ValueChanged(object sender, EventArgs e)
@@ -176,19 +194,41 @@ namespace mainView
 
     private void button4_Click(object sender, EventArgs e)
     {
-      _Solver.DescriptorsInit();
+      try
+      {
+        _Solver.DescriptorsInit();
+      }
+      catch (Exception ee)
+      {
+        ShowError("Init error", ee.ToString());
+      }
+
       ShowSolvePlayArea();
     }
 
     private void button5_Click(object sender, EventArgs e)
     {
-      _Solver.SolveSmallStepH((int)numericUpDownHStep.Value);
+      try
+      {
+        _Solver.SolveSmallStepH((int)numericUpDownHStep.Value);
+      }
+      catch (Exception ee)
+      {
+        ShowError("Step error", ee.ToString());
+      }
       ShowSolvePlayArea();
     }
 
     private void button6_Click(object sender, EventArgs e)
     {
-      _Solver.SolveSmallStepV((int)numericUpDownVStep.Value);
+      try
+      {
+        _Solver.SolveSmallStepV((int)numericUpDownVStep.Value);
+      }
+      catch (Exception ee)
+      {
+        ShowError("Step error", ee.ToString());
+      }
       ShowSolvePlayArea();
     }
 
@@ -218,13 +258,29 @@ namespace mainView
 
     private void button7_Click(object sender, EventArgs e)
     {
-      _Solver.SolveTestInit();
+      try
+      {
+        _Solver.SolveTestInit();
+      }
+      catch (Exception ee)
+      {
+        ShowError("Test solve error", ee.ToString());
+      }
+
       ShowSolvePlayArea();
     }
 
     private void button8_Click(object sender, EventArgs e)
     {
-      _Solver.SolveTestGo();
+      try
+      {
+        _Solver.SolveTestGo();
+      }
+      catch (Exception ee)
+      {
+        ShowError("Test solve error", ee.ToString());
+      }
+
       ShowSolvePlayArea();
     }
 
@@ -236,19 +292,26 @@ namespace mainView
 
     private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
     {
-      do
+      try
       {
-        SolveLog.Instance.ResetChangesCounter();
+        do
+        {
+          SolveLog.Instance.ResetChangesCounter();
 
-        _Solver.SolveVertStep();
-        //System.Threading.Thread.Sleep(100);
-        pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
+          _Solver.SolveVertStep();
+          //System.Threading.Thread.Sleep(100);
+          pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
 
-        _Solver.SolveHorizStep();
-        //System.Threading.Thread.Sleep(100);
-        pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
+          _Solver.SolveHorizStep();
+          //System.Threading.Thread.Sleep(100);
+          pictureBoxSolve.Invoke(new Action(() => ShowSolvePlayArea()));
 
-      } while (SolveLog.Instance.Changes > 0);
+        } while (SolveLog.Instance.Changes > 0);
+      }
+      catch (Exception ee)
+      {
+        ShowError("Full solve error", ee.ToString());
+      }
     }
 
     private void button10_Click(object sender, EventArgs e)
@@ -279,7 +342,49 @@ namespace mainView
       lineAnalizeForm.Show();
     }
 
-    void ShowSolvePlayArea()
+    private void pictureBoxSolve_Click(object sender, EventArgs e)
+    {
+      var bitmapX = (e as MouseEventArgs).X;
+      var bitmapY = (e as MouseEventArgs).Y;
+
+      if (pictureBoxSolve.SizeMode == PictureBoxSizeMode.Zoom)
+      {
+        var point = Helper.TranslateZoomMousePosition(pictureBoxSolve, new Point(bitmapX, bitmapY));
+        bitmapX = point.X;
+        bitmapY = point.Y;
+      }
+
+      for (int y = 0; y < _Solver.PlayArea.SizeY; y++)
+        for (int x = 0; x < _Solver.PlayArea.SizeX; x++)
+        {
+          var cell = _Solver.PlayArea.GetCell(x, y);
+          if (cell.isTarget(bitmapX, bitmapY))
+          {
+            switch (cell.Value)
+            {
+              case TCell.F: cell.Set(TCell.X, "manual"); break;
+              case TCell.No: cell.Set(TCell.F, "manual"); break;
+              case TCell.X: cell.Set(TCell.No, "manual"); break;
+            }
+          }
+        }
+
+      ShowSolvePlayArea();
+    }
+
+    private void ShowSolvePlayArea()
+    {
+      try
+      {
+        _ShowSolvePlayArea();
+      }
+      catch (Exception e)
+      {
+        ShowError("Showing playarea error", e.ToString());
+      }
+    }
+
+    void _ShowSolvePlayArea()
     {
 
       List<DescriptorData>[] rowDescrV = _Solver.rowDescrV;
@@ -318,14 +423,29 @@ namespace mainView
       {
         for (int gx = 0; gx < sizePA_X + sizeDescr_X; gx++)
         {
+          // playArea.GetCell(gx - sizeDescr_X, gy- sizeDescr_Y).bitmapX = gx * widthCell;
+          var x = gx - sizeDescr_X;
+          var y = gy - sizeDescr_Y;
+          var bitmapX = gx * widthCell;
+          var bitmapY = gy * widthCell;
+
+          if (x >= 0 && y >= 0)
+          {
+            var currentCell = playArea.GetCell(x, y);
+            currentCell.bitmapX = bitmapX;
+            currentCell.bitmapY = bitmapY;
+            currentCell.bitmapWidth = widthCell;
+            currentCell.bitmapHeight = widthCell;
+          }
+
           for (int iy = 0; iy < widthCell; iy++)
           {
             for (int ix = 0; ix < widthCell; ix++)
             {
               if (gx < sizeDescr_X && gy < sizeDescr_Y) continue;
 
-              var xx = gx * widthCell + ix;
-              var yy = gy * widthCell + iy;
+              var xx = bitmapX + ix;
+              var yy = bitmapY + iy;
 
               if (iy < netWidth || ix < netWidth) bitmap.SetPixel(xx, yy, Color.Gray);
               else
@@ -386,8 +506,6 @@ namespace mainView
                 {
                   // draw playArea
 
-                  var x = gx - sizeDescr_X;
-                  var y = gy - sizeDescr_Y;
 
                   if (playArea.GetValue(x, y) == TCell.No) bitmap.SetPixel(xx, yy, Color.White);
 

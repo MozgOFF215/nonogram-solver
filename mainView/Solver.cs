@@ -194,6 +194,7 @@ namespace mainView
         SolveLogic(SizeX, GetPAVectorHoriz(i), rowDescrH[i]);
     }
 
+
     int countTestRows;
 
     void _fillTestData(string initPA, int[] initDescr)
@@ -216,7 +217,6 @@ namespace mainView
       foreach (var d in initDescr) rowDescrH[countTestRows].Add(new DescriptorData(false, countTestRows, rowDescrH[countTestRows].Count, SizeX, d));
       countTestRows++;
     }
-
 
     void SolveLogic(int rowSize, Cell[] vectorPA, List<DescriptorData> rowDescriptors)
     {
