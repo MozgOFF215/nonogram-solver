@@ -32,10 +32,6 @@
       this.pictureBoxHistY = new System.Windows.Forms.PictureBox();
       this.panelHistY = new System.Windows.Forms.Panel();
       this.labelErrorsX = new System.Windows.Forms.Label();
-      this.numericUpDownLevelX = new System.Windows.Forms.NumericUpDown();
-      this.numericUpDownLevelY = new System.Windows.Forms.NumericUpDown();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.button1 = new System.Windows.Forms.Button();
       this.labelErrorsY = new System.Windows.Forms.Label();
       this.panelHistX = new System.Windows.Forms.Panel();
@@ -53,7 +49,7 @@
       this.button7 = new System.Windows.Forms.Button();
       this.button8 = new System.Windows.Forms.Button();
       this.button9 = new System.Windows.Forms.Button();
-      this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+      this.backgroundWorkerSolve = new System.ComponentModel.BackgroundWorker();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.button10 = new System.Windows.Forms.Button();
@@ -61,11 +57,11 @@
       this.panelOriginal = new System.Windows.Forms.Panel();
       this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
       this.panel1 = new System.Windows.Forms.Panel();
+      this.comboBoxExamples = new System.Windows.Forms.ComboBox();
+      this.backgroundWorkerAnalizer = new System.ComponentModel.BackgroundWorker();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).BeginInit();
       this.panelHistY.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLevelX)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLevelY)).BeginInit();
       this.panelHistX.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistX)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSolve)).BeginInit();
@@ -105,7 +101,7 @@
       this.panelHistY.AutoScroll = true;
       this.panelHistY.Controls.Add(this.pictureBoxHistY);
       this.panelHistY.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panelHistY.Location = new System.Drawing.Point(402, 34);
+      this.panelHistY.Location = new System.Drawing.Point(401, 34);
       this.panelHistY.Margin = new System.Windows.Forms.Padding(4);
       this.panelHistY.Name = "panelHistY";
       this.panelHistY.Size = new System.Drawing.Size(205, 559);
@@ -114,76 +110,28 @@
       // labelErrorsX
       // 
       this.labelErrorsX.AutoSize = true;
-      this.labelErrorsX.Location = new System.Drawing.Point(42, 616);
+      this.labelErrorsX.Location = new System.Drawing.Point(43, 615);
       this.labelErrorsX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelErrorsX.Name = "labelErrorsX";
       this.labelErrorsX.Size = new System.Drawing.Size(83, 17);
       this.labelErrorsX.TabIndex = 4;
       this.labelErrorsX.Text = "---------------";
       // 
-      // numericUpDownLevelX
-      // 
-      this.numericUpDownLevelX.Location = new System.Drawing.Point(182, 15);
-      this.numericUpDownLevelX.Margin = new System.Windows.Forms.Padding(4);
-      this.numericUpDownLevelX.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-      this.numericUpDownLevelX.Name = "numericUpDownLevelX";
-      this.numericUpDownLevelX.Size = new System.Drawing.Size(91, 22);
-      this.numericUpDownLevelX.TabIndex = 5;
-      this.numericUpDownLevelX.ValueChanged += new System.EventHandler(this.numericUpDownLevelX_ValueChanged);
-      // 
-      // numericUpDownLevelY
-      // 
-      this.numericUpDownLevelY.Location = new System.Drawing.Point(182, 47);
-      this.numericUpDownLevelY.Margin = new System.Windows.Forms.Padding(4);
-      this.numericUpDownLevelY.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-      this.numericUpDownLevelY.Name = "numericUpDownLevelY";
-      this.numericUpDownLevelY.Size = new System.Drawing.Size(91, 22);
-      this.numericUpDownLevelY.TabIndex = 6;
-      this.numericUpDownLevelY.ValueChanged += new System.EventHandler(this.numericUpDownLevelY_ValueChanged);
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(27, 20);
-      this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(55, 17);
-      this.label1.TabIndex = 7;
-      this.label1.Text = "Level X";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(27, 55);
-      this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(55, 17);
-      this.label2.TabIndex = 7;
-      this.label2.Text = "Level Y";
-      // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(30, 162);
+      this.button1.Location = new System.Drawing.Point(29, 162);
       this.button1.Margin = new System.Windows.Forms.Padding(4);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(119, 36);
       this.button1.TabIndex = 8;
       this.button1.Text = "Rescan";
       this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.button1.Click += new System.EventHandler(this.buttonRescan_Click);
       // 
       // labelErrorsY
       // 
       this.labelErrorsY.AutoSize = true;
-      this.labelErrorsY.Location = new System.Drawing.Point(42, 632);
+      this.labelErrorsY.Location = new System.Drawing.Point(43, 633);
       this.labelErrorsY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.labelErrorsY.Name = "labelErrorsY";
       this.labelErrorsY.Size = new System.Drawing.Size(83, 17);
@@ -199,7 +147,7 @@
       this.panelHistX.Location = new System.Drawing.Point(4, 601);
       this.panelHistX.Margin = new System.Windows.Forms.Padding(4);
       this.panelHistX.Name = "panelHistX";
-      this.panelHistX.Size = new System.Drawing.Size(1001, 177);
+      this.panelHistX.Size = new System.Drawing.Size(999, 177);
       this.panelHistX.TabIndex = 2;
       // 
       // pictureBoxHistX
@@ -219,7 +167,7 @@
       this.pictureBoxSolve.Location = new System.Drawing.Point(0, 0);
       this.pictureBoxSolve.Margin = new System.Windows.Forms.Padding(4);
       this.pictureBoxSolve.Name = "pictureBoxSolve";
-      this.pictureBoxSolve.Size = new System.Drawing.Size(392, 563);
+      this.pictureBoxSolve.Size = new System.Drawing.Size(391, 563);
       this.pictureBoxSolve.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxSolve.TabIndex = 0;
       this.pictureBoxSolve.TabStop = false;
@@ -310,7 +258,7 @@
       // 
       this.checkBoxSolveZoom.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.checkBoxSolveZoom.AutoSize = true;
-      this.checkBoxSolveZoom.Location = new System.Drawing.Point(777, 4);
+      this.checkBoxSolveZoom.Location = new System.Drawing.Point(775, 4);
       this.checkBoxSolveZoom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.checkBoxSolveZoom.Name = "checkBoxSolveZoom";
       this.checkBoxSolveZoom.Size = new System.Drawing.Size(66, 21);
@@ -324,10 +272,10 @@
       this.panelSolve.AutoScroll = true;
       this.panelSolve.Controls.Add(this.pictureBoxSolve);
       this.panelSolve.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panelSolve.Location = new System.Drawing.Point(614, 32);
+      this.panelSolve.Location = new System.Drawing.Point(613, 32);
       this.panelSolve.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.panelSolve.Name = "panelSolve";
-      this.panelSolve.Size = new System.Drawing.Size(392, 563);
+      this.panelSolve.Size = new System.Drawing.Size(391, 563);
       this.panelSolve.TabIndex = 11;
       // 
       // button7
@@ -355,7 +303,7 @@
       // button9
       // 
       this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.button9.Location = new System.Drawing.Point(30, 219);
+      this.button9.Location = new System.Drawing.Point(29, 219);
       this.button9.Margin = new System.Windows.Forms.Padding(4);
       this.button9.Name = "button9";
       this.button9.Size = new System.Drawing.Size(260, 59);
@@ -364,9 +312,9 @@
       this.button9.UseVisualStyleBackColor = true;
       this.button9.Click += new System.EventHandler(this.button9_Click);
       // 
-      // backgroundWorker1
+      // backgroundWorkerSolve
       // 
-      this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+      this.backgroundWorkerSolve.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerSolver_DoWork);
       // 
       // groupBox1
       // 
@@ -389,7 +337,7 @@
       // 
       this.groupBox2.Controls.Add(this.button7);
       this.groupBox2.Controls.Add(this.button8);
-      this.groupBox2.Location = new System.Drawing.Point(30, 529);
+      this.groupBox2.Location = new System.Drawing.Point(29, 529);
       this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
@@ -400,7 +348,7 @@
       // 
       // button10
       // 
-      this.button10.Location = new System.Drawing.Point(30, 111);
+      this.button10.Location = new System.Drawing.Point(29, 111);
       this.button10.Margin = new System.Windows.Forms.Padding(4);
       this.button10.Name = "button10";
       this.button10.Size = new System.Drawing.Size(119, 36);
@@ -413,7 +361,7 @@
       // 
       this.checkBoxOriginalZoom.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.checkBoxOriginalZoom.AutoSize = true;
-      this.checkBoxOriginalZoom.Location = new System.Drawing.Point(166, 4);
+      this.checkBoxOriginalZoom.Location = new System.Drawing.Point(165, 4);
       this.checkBoxOriginalZoom.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.checkBoxOriginalZoom.Name = "checkBoxOriginalZoom";
       this.checkBoxOriginalZoom.Size = new System.Drawing.Size(66, 21);
@@ -430,7 +378,7 @@
       this.panelOriginal.Location = new System.Drawing.Point(3, 32);
       this.panelOriginal.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.panelOriginal.Name = "panelOriginal";
-      this.panelOriginal.Size = new System.Drawing.Size(392, 563);
+      this.panelOriginal.Size = new System.Drawing.Size(391, 563);
       this.panelOriginal.TabIndex = 19;
       // 
       // tableLayoutPanel1
@@ -439,7 +387,7 @@
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 213F));
       this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 315F));
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 317F));
       this.tableLayoutPanel1.Controls.Add(this.checkBoxOriginalZoom, 0, 0);
       this.tableLayoutPanel1.Controls.Add(this.panelOriginal, 0, 1);
       this.tableLayoutPanel1.Controls.Add(this.panelSolve, 2, 1);
@@ -449,6 +397,7 @@
       this.tableLayoutPanel1.Controls.Add(this.panel1, 3, 0);
       this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+      this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.tableLayoutPanel1.Name = "tableLayoutPanel1";
       this.tableLayoutPanel1.RowCount = 3;
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -461,10 +410,8 @@
       // 
       // panel1
       // 
-      this.panel1.Controls.Add(this.label2);
+      this.panel1.Controls.Add(this.comboBoxExamples);
       this.panel1.Controls.Add(this.button10);
-      this.panel1.Controls.Add(this.label1);
-      this.panel1.Controls.Add(this.numericUpDownLevelX);
       this.panel1.Controls.Add(this.groupBox2);
       this.panel1.Controls.Add(this.button4);
       this.panel1.Controls.Add(this.groupBox1);
@@ -472,13 +419,28 @@
       this.panel1.Controls.Add(this.button9);
       this.panel1.Controls.Add(this.labelErrorsY);
       this.panel1.Controls.Add(this.button1);
-      this.panel1.Controls.Add(this.numericUpDownLevelY);
       this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel1.Location = new System.Drawing.Point(1012, 3);
+      this.panel1.Location = new System.Drawing.Point(1010, 2);
+      this.panel1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this.panel1.Name = "panel1";
       this.tableLayoutPanel1.SetRowSpan(this.panel1, 3);
-      this.panel1.Size = new System.Drawing.Size(309, 776);
+      this.panel1.Size = new System.Drawing.Size(311, 778);
       this.panel1.TabIndex = 20;
+      // 
+      // comboBoxExamples
+      // 
+      this.comboBoxExamples.FormattingEnabled = true;
+      this.comboBoxExamples.Location = new System.Drawing.Point(27, 43);
+      this.comboBoxExamples.Margin = new System.Windows.Forms.Padding(4);
+      this.comboBoxExamples.Name = "comboBoxExamples";
+      this.comboBoxExamples.Size = new System.Drawing.Size(265, 24);
+      this.comboBoxExamples.TabIndex = 21;
+      this.comboBoxExamples.SelectedIndexChanged += new System.EventHandler(this.comboBoxExamples_SelectedIndexChanged);
+      // 
+      // backgroundWorkerAnalizer
+      // 
+      this.backgroundWorkerAnalizer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerAnalizer_DoWork);
+      this.backgroundWorkerAnalizer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerAnalizer_RunWorkerCompleted);
       // 
       // MainForm
       // 
@@ -489,12 +451,10 @@
       this.Margin = new System.Windows.Forms.Padding(4);
       this.Name = "MainForm";
       this.Text = "Nonogram Solver. Copyright © MozgOFF, 2020";
-      this.Load += new System.EventHandler(this.MainForm_Load);
+      this.Shown += new System.EventHandler(this.MainForm_Shown);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistY)).EndInit();
       this.panelHistY.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLevelX)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLevelY)).EndInit();
       this.panelHistX.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistX)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSolve)).EndInit();
@@ -518,10 +478,6 @@
     private System.Windows.Forms.PictureBox pictureBoxHistY;
     private System.Windows.Forms.Panel panelHistY;
     private System.Windows.Forms.Label labelErrorsX;
-    private System.Windows.Forms.NumericUpDown numericUpDownLevelX;
-    private System.Windows.Forms.NumericUpDown numericUpDownLevelY;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.Label labelErrorsY;
     private System.Windows.Forms.Panel panelHistX;
@@ -539,7 +495,7 @@
     private System.Windows.Forms.Button button7;
     private System.Windows.Forms.Button button8;
     private System.Windows.Forms.Button button9;
-    private System.ComponentModel.BackgroundWorker backgroundWorker1;
+    private System.ComponentModel.BackgroundWorker backgroundWorkerSolve;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.Button button10;
@@ -547,6 +503,8 @@
     private System.Windows.Forms.Panel panelOriginal;
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.ComboBox comboBoxExamples;
+    private System.ComponentModel.BackgroundWorker backgroundWorkerAnalizer;
   }
 }
 

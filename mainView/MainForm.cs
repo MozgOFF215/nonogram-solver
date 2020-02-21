@@ -28,41 +28,165 @@ namespace mainView
     Bitmap HistBitmapY;
     int maxValX;
     int maxValY;
-    int levelX, levelY;
 
     Image sourceImage;
 
-    void MainForm_Load(object sender, EventArgs e)
+    bool insensitiveComboBox;
+
+    private void MainForm_Shown(object sender, EventArgs e)
     {
+      Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
+
+      var examples = new DirectoryInfo("./images").GetFiles().Select(i => i.Name);
+
+      comboBoxExamples.Items.AddRange(examples.ToArray());
+
+      var firstExampleFile = new DirectoryInfo("./images").GetFiles().First();
+
+      var savedName = Properties.Settings.Default.ExampleFileName;
+
+      savedName = string.IsNullOrWhiteSpace(savedName) ? firstExampleFile.Name : savedName;
+
+      Properties.Settings.Default.ExampleFileName = savedName;
+
+      LoadSourceImage(savedName);
+
       Logic.InitOCRResultSaver();
 
-      //sourceImage = Image.FromFile("images\\Screenshot_20x20.png");
-      //sourceImage = Image.FromFile("images\\Screenshot_25x25.png");
-      sourceImage = Image.FromFile("images\\Screenshot_25x25_2.png");
-      //sourceImage = Image.FromFile("images\\Screenshot_25x25_3.png");
+      insensitiveComboBox = true;
+      comboBoxExamples.SelectedItem = savedName;
+      insensitiveComboBox = false;
 
-      levelX = 60;
-      levelY = 160;
-
-      numericUpDownLevelX.Value = levelX;
-      numericUpDownLevelY.Value = levelY;
-
-      DrawAndAnalyze(sourceImage);
+      DrawAndAnalyze();
     }
+
+    void LoadSourceImage(string fileName)
+    {
+      if (string.IsNullOrWhiteSpace(fileName)) return;
+      sourceImage = Image.FromFile($"images\\{fileName}");
+      Properties.Settings.Default.ExampleFileName = fileName;
+    }
+
+    private void Default_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      Properties.Settings.Default.Save();
+    }
+
+    SplashForm splash;
 
     private void DrawAndAnalyze(Image sourceImage = null)
     {
-      try
-      {
-        _DrawAndAnalyze(sourceImage);
-      }
-      catch (Exception e)
-      {
-        ShowError("Analyze and Solve error", e.ToString());
-      }
+      if (!backgroundWorkerAnalizer.IsBusy)
+        backgroundWorkerAnalizer.RunWorkerAsync();
+    }
+
+    void OpAsync(Action action)
+    {
+      Invoke(action);
     }
 
     void _DrawAndAnalyze(Image sourceImage)
+    {
+      OpAsync(() =>
+      {
+        LoadSourceImage(sourceImage);
+
+        checkBoxSolveZoom.Checked = true;
+        pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
+      });
+
+
+      OpAsync(() =>
+      {
+        histX = new Dictionary<int, int>();
+        histY = new Dictionary<int, int>();
+        
+        // search horizontal lines 
+        var level = 150;
+        var markedLinesY = Logic.SearchLines(
+          GrayscaledSourceBitmap.Height,
+          GrayscaledSourceBitmap.Width,
+          level,
+          (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
+        );
+
+        // prepare crop from up and down
+        var startY = markedLinesY.First().start;
+        var endY = markedLinesY.Last().start + markedLinesY.Last().length;
+        var heightY = endY - startY + 1;
+
+        // crop bitmap
+        GrayscaledSourceBitmap = Logic.Crop(GrayscaledSourceBitmap, startY - 5, heightY + 10);
+        pictureBoxOriginal.Image = GrayscaledSourceBitmap;
+
+        // second iteration while bitmap croped
+        markedLinesY = Logic.SearchLines(
+          GrayscaledSourceBitmap.Height,
+          GrayscaledSourceBitmap.Width,
+          level,
+          (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
+        );
+
+        // search vertical lines
+        var markedLinesX = Logic.SearchLines(
+          GrayscaledSourceBitmap.Width,
+          GrayscaledSourceBitmap.Height,
+          150,
+          (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R
+        );
+
+        // gen histograms for Y
+        histY = Logic.GenHistogram(GrayscaledSourceBitmap.Height, GrayscaledSourceBitmap.Width,
+          (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R);
+
+        // histogram Y analyze
+        maxValY = histY.Select(i => i.Value).Max();
+
+        pictureBoxHistY.Height = GrayscaledSourceBitmap.Height;
+        pictureBoxHistY.Width = panelHistY.Width - 20;
+
+        HistBitmapY = new Bitmap(pictureBoxHistY.Width, GrayscaledSourceBitmap.Height);
+        Logic.RefreshHistY(histY, HistBitmapY, markedLinesY, maxValY);
+
+        pictureBoxHistY.Image = HistBitmapY;
+        pictureBoxHistY.SizeMode = PictureBoxSizeMode.Zoom;
+
+        // gen histograms for X
+        histX = Logic.GenHistogram(GrayscaledSourceBitmap.Width, GrayscaledSourceBitmap.Height,
+          (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R);
+
+        // histogram X analyze
+        maxValX = histX.Select(i => i.Value).Max();
+
+        pictureBoxHistX.Height = panelHistX.Height - 40;
+        pictureBoxHistX.Width = GrayscaledSourceBitmap.Width;
+
+        HistBitmapX = new Bitmap(GrayscaledSourceBitmap.Width, pictureBoxHistX.Height);
+        Logic.RefreshHistX(histX, HistBitmapX, markedLinesX, maxValX);
+
+        pictureBoxHistX.Image = HistBitmapX;
+        pictureBoxHistX.SizeMode = PictureBoxSizeMode.Zoom;
+
+        try
+        {
+          var resOCR = Logic.OCR(markedLinesX, markedLinesY, GrayscaledSourceBitmap.GetPixel);
+          _Solver.SolvePreparation(resOCR);
+        }
+        catch (Exception e)
+        {
+          ShowError("OCR error", e.ToString());
+        }
+      });
+
+      OpAsync(() =>
+      {
+        System.Threading.Thread.Sleep(1000);
+        ShowSolvePlayArea();
+        System.Threading.Thread.Sleep(1000);
+      });
+    }
+
+    private void LoadSourceImage(Image sourceImage)
     {
       sourceImage = sourceImage == null ? this.sourceImage : sourceImage;
       this.sourceImage = sourceImage;
@@ -74,90 +198,6 @@ namespace mainView
       checkBoxOriginalZoom.Checked = true;
       pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
       pictureBoxOriginal.Image = sourceImage;
-
-      checkBoxSolveZoom.Checked = true;
-      pictureBoxSolve.SizeMode = PictureBoxSizeMode.Zoom;
-
-      histX = new Dictionary<int, int>();
-      histY = new Dictionary<int, int>();
-
-      // search horizontal lines 
-      var level = 150;
-      var markedLinesY = Logic.SearchLines(
-        GrayscaledSourceBitmap.Height,
-        GrayscaledSourceBitmap.Width,
-        level,
-        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
-      );
-
-      // prepare crop from up and down
-      var startY = markedLinesY.First().start;
-      var endY = markedLinesY.Last().start + markedLinesY.Last().length;
-      var heightY = endY - startY + 1;
-
-      // crop bitmap
-      GrayscaledSourceBitmap = Logic.Crop(GrayscaledSourceBitmap, startY - 5, heightY + 10);
-      pictureBoxOriginal.Image = GrayscaledSourceBitmap;
-
-      // second iteration while bitmap croped
-      markedLinesY = Logic.SearchLines(
-        GrayscaledSourceBitmap.Height,
-        GrayscaledSourceBitmap.Width,
-        level,
-        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R
-      );
-
-      // search vertical lines
-      var markedLinesX = Logic.SearchLines(
-        GrayscaledSourceBitmap.Width,
-        GrayscaledSourceBitmap.Height,
-        150,
-        (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R
-      );
-
-      // gen histograms for Y
-      histY = Logic.GenHistogram(GrayscaledSourceBitmap.Height, GrayscaledSourceBitmap.Width,
-        (x, y) => GrayscaledSourceBitmap.GetPixel(x, y).R);
-
-      // histogram Y analyze
-      maxValY = histY.Select(i => i.Value).Max();
-
-      pictureBoxHistY.Height = GrayscaledSourceBitmap.Height;
-      pictureBoxHistY.Width = panelHistY.Width - 20;
-
-      HistBitmapY = new Bitmap(pictureBoxHistY.Width, GrayscaledSourceBitmap.Height);
-      Logic.RefreshHistY(levelY, histY, HistBitmapY, markedLinesY, maxValY);
-
-      pictureBoxHistY.Image = HistBitmapY;
-      pictureBoxHistY.SizeMode = PictureBoxSizeMode.Zoom;
-
-      // gen histograms for X
-      histX = Logic.GenHistogram(GrayscaledSourceBitmap.Width, GrayscaledSourceBitmap.Height,
-        (y, x) => GrayscaledSourceBitmap.GetPixel(x, y).R);
-
-      // histogram X analyze
-      maxValX = histX.Select(i => i.Value).Max();
-
-      pictureBoxHistX.Height = panelHistX.Height - 40;
-      pictureBoxHistX.Width = GrayscaledSourceBitmap.Width;
-
-      HistBitmapX = new Bitmap(GrayscaledSourceBitmap.Width, pictureBoxHistX.Height);
-      Logic.RefreshHistX(levelX, histX, HistBitmapX, markedLinesX, maxValX);
-
-      pictureBoxHistX.Image = HistBitmapX;
-      pictureBoxHistX.SizeMode = PictureBoxSizeMode.Zoom;
-
-      try
-      {
-        var resOCR = Logic.OCR(markedLinesX, markedLinesY, GrayscaledSourceBitmap.GetPixel);
-        _Solver.SolvePreparation(resOCR);
-      }
-      catch (Exception e)
-      {
-        ShowError("OCR error", e.ToString());
-      }
-
-      ShowSolvePlayArea();
     }
 
     private void ShowError(string capture, string text)
@@ -165,17 +205,7 @@ namespace mainView
       MessageBox.Show(text, capture);
     }
 
-    private void numericUpDownLevelX_ValueChanged(object sender, EventArgs e)
-    {
-      levelX = (int)numericUpDownLevelX.Value;
-    }
-
-    private void numericUpDownLevelY_ValueChanged(object sender, EventArgs e)
-    {
-      levelY = (int)numericUpDownLevelY.Value;
-    }
-
-    private void button1_Click(object sender, EventArgs e)
+    private void buttonRescan_Click(object sender, EventArgs e)
     {
       DrawAndAnalyze();
     }
@@ -286,11 +316,11 @@ namespace mainView
 
     private void button9_Click(object sender, EventArgs e)
     {
-      if (!backgroundWorker1.IsBusy)
-        backgroundWorker1.RunWorkerAsync();
+      if (!backgroundWorkerSolve.IsBusy)
+        backgroundWorkerSolve.RunWorkerAsync();
     }
 
-    private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+    private void backgroundWorkerSolver_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
     {
       try
       {
@@ -416,14 +446,10 @@ namespace mainView
       g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
       g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-
-      //playArea[0, 0].tCell = TCell.X;
-
       for (int gy = 0; gy < sizePA_Y + sizeDescr_Y; gy++)
       {
         for (int gx = 0; gx < sizePA_X + sizeDescr_X; gx++)
         {
-          // playArea.GetCell(gx - sizeDescr_X, gy- sizeDescr_Y).bitmapX = gx * widthCell;
           var x = gx - sizeDescr_X;
           var y = gy - sizeDescr_Y;
           var bitmapX = gx * widthCell;
@@ -505,8 +531,6 @@ namespace mainView
                 else
                 {
                   // draw playArea
-
-
                   if (playArea.GetValue(x, y) == TCell.No) bitmap.SetPixel(xx, yy, Color.White);
 
                   if (playArea.GetValue(x, y) == TCell.F)
@@ -545,6 +569,47 @@ namespace mainView
 
     }
 
+    private void comboBoxExamples_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (insensitiveComboBox) return;
+
+      var delected = comboBoxExamples.SelectedItem;
+
+      if (string.IsNullOrWhiteSpace(comboBoxExamples.SelectedItem.ToString())) return;
+
+      LoadSourceImage(comboBoxExamples.SelectedItem.ToString());
+
+      DrawAndAnalyze();
+    }
+
+    private void backgroundWorkerAnalizer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+    {
+      OpAsync(() =>
+      {
+        splash = new SplashForm();
+        splash.Show();
+        var x = Location.X + (Width - splash.Width) / 2;
+        var y = Location.Y + (Height - splash.Height) / 2;
+        splash.Location = new Point(Math.Max(x, 0), Math.Max(y, 0));
+      });
+
+      System.Threading.Thread.Sleep(100);
+
+      try
+      {
+        _DrawAndAnalyze(sourceImage);
+      }
+      catch (Exception ee)
+      {
+        ShowError("Analyze and Solve error", ee.ToString());
+      }
+    }
+
+    private void backgroundWorkerAnalizer_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+    {
+      splash.Close();
+      splash.Dispose();
+    }
   }
 }
 

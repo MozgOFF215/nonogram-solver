@@ -230,7 +230,7 @@ namespace mainView
     static Tuple<string, int> OCRBitmapV2(Bitmap bSprite)
     {
       tessnet2.Tesseract ocr = new tessnet2.Tesseract();
-      ocr.SetVariable("tessedit_char_whitelist", "0123456789B");
+      ocr.SetVariable("tessedit_char_whitelist", "0123456789");
       ocr.Init(@"", "eng", false);
       List<tessnet2.Word> result = ocr.DoOCR(bSprite, Rectangle.Empty);
       var resultText = string.Join("", result.Select(i => i.Text));
@@ -293,10 +293,6 @@ namespace mainView
               } while (iter.Next(PageIteratorLevel.Block));
             }
 
-            //if (int.TryParse(text, out newDescriptor.value))
-            //  fullBmp.Save($"{ocrResultsPath}/{newDescriptor.value} {ix:00}-{iy:00}.png", System.Drawing.Imaging.ImageFormat.Png);
-            //else
-            //fullBmp.Save($"{ocrResultsPath}/full bmp.png", System.Drawing.Imaging.ImageFormat.Png);
           }
         }
       }
@@ -351,7 +347,7 @@ namespace mainView
       return resHist;
     }
 
-    public static void RefreshHistX(long level, Dictionary<int, int> histDictionary, Bitmap resultBitmap, List<MarkedLineInfo> markedLines, int maxValX)
+    public static void RefreshHistX(Dictionary<int, int> histDictionary, Bitmap resultBitmap, List<MarkedLineInfo> markedLines, int maxValX)
     {
       foreach (var hist in histDictionary)
       {
@@ -363,17 +359,6 @@ namespace mainView
             {
               var hasMarkedLine = markedLines.Where(j => j.start <= hist.Key && j.start + j.length >= hist.Key).Count() > 0;
               resultBitmap.SetPixel(hist.Key, i, hasMarkedLine ? Color.Red : Color.Green);
-            }
-            else
-            {
-              if (hist.Value < level)
-              {
-                resultBitmap.SetPixel(hist.Key, i, Color.White);
-              }
-              else
-              {
-                resultBitmap.SetPixel(hist.Key, i, Color.Blue);
-              }
             }
           }
           else
@@ -387,7 +372,7 @@ namespace mainView
       }
     }
 
-    public static void RefreshHistY(long level, Dictionary<int, int> histDictionary, Bitmap resultBitmap, List<MarkedLineInfo> markedLines, int maxValY)
+    public static void RefreshHistY(Dictionary<int, int> histDictionary, Bitmap resultBitmap, List<MarkedLineInfo> markedLines, int maxValY)
     {
       foreach (var hist in histDictionary)
       {
@@ -399,17 +384,6 @@ namespace mainView
             {
               var hasMarkedLine = markedLines.Where(j => j.start <= hist.Key && j.start + j.length >= hist.Key).Count() > 0;
               resultBitmap.SetPixel(i, hist.Key, hasMarkedLine ? Color.Red : Color.Green);
-            }
-            else
-            {
-              if (hist.Value < level)
-              {
-                resultBitmap.SetPixel(i, hist.Key, Color.White);
-              }
-              else
-              {
-                resultBitmap.SetPixel(i, hist.Key, Color.Blue);
-              }
             }
           }
           else

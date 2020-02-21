@@ -22,5 +22,17 @@ namespace mainView.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExampleFileName {
+            get {
+                return ((string)(this["ExampleFileName"]));
+            }
+            set {
+                this["ExampleFileName"] = value;
+            }
+        }
     }
 }
